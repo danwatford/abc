@@ -1,6 +1,6 @@
 package com.foomoo.abc.parsing
 
-import com.foomoo.abc.{AbcTune, AbcTuneBuilder}
+import com.foomoo.abc._
 
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.input.CharSequenceReader
@@ -18,7 +18,13 @@ trait AbcTuneParser extends RegexParsers {
 
   def header: Parser[List[AbcHeaderItem]] = rep(headerItem) ~ keyItem ^^ { case headerItemList ~ keyHeaderItem => keyHeaderItem :: headerItemList }
 
-  def notes: Parser[String] = nonLinebreakString
+  def note: Parser[AbcNote] = """[a-gA-G][\d]*""".r ^^ { case noteValue => AbcNote(noteValue)}
+
+  def bar: Parser[AbcBar] = opt("|") ~> rep1(note) ^^ { case notes => AbcBar(notes)}
+
+  def repeat: Parser[AbcRepeat] = "|:" ~> (rep1(bar) <~ ":|") ^^ { case bars => AbcRepeat(bars) }
+
+  def notes: Parser[List[AbcNoteElement]] = rep1(bar | repeat)
 
   def tune: Parser[AbcTune] = header ~ notes ^^ {
     case headerItemList ~ notes => {
@@ -33,10 +39,13 @@ trait AbcTuneParser extends RegexParsers {
         case _ =>
       }
 
+      builder.noteElements ++= notes
+
       builder.build()
     }
   }
 
+  def tunes: Parser[List[AbcTune]] = rep1(tune)
 }
 
 object AbcTuneParser extends AbcTuneParser {

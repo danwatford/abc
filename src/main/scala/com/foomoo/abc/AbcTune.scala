@@ -1,16 +1,35 @@
 package com.foomoo.abc
 
-class AbcTune(val reference: Option[String], val title: Option[String], val meter: Option[String], val key: String, val composer: Option[String]) {
+import scala.collection.mutable.ListBuffer
+
+class AbcTune(builder: AbcTuneBuilder) {
+  val reference: Option[String] = builder.reference
+  val title: Option[String] = builder.title
+  val meter: Option[String] = builder.meter
+  val key: String = builder.key
+  val composer: Option[String] = builder.composer
+  val noteElements: Seq[AbcNoteElement] = builder.noteElements.toList
+
+  override def toString: String = String.format("AbcTune(%s, %s, %s, %s, %s, %s)", reference, title, meter, key, composer, noteElements)
 
 }
 
+sealed trait AbcNoteElement
+
+case class AbcRepeat(xs: Seq[AbcNoteElement]) extends AbcNoteElement
+
+case class AbcBar(xs: Seq[AbcNoteElement]) extends AbcNoteElement
+
+case class AbcNote(note: String) extends AbcNoteElement
+
 class AbcTuneBuilder {
 
-  private var reference: Option[String] = None
-  private var title: Option[String] = None
-  private var meter: Option[String] = None
-  private var key: String = null
-  private var composer: Option[String] = None
+  var reference: Option[String] = None
+  var title: Option[String] = None
+  var meter: Option[String] = None
+  var key: String = null
+  var composer: Option[String] = None
+  var noteElements = new ListBuffer[AbcNoteElement]
 
   def setReference(reference: String): AbcTuneBuilder = {
     this.reference = Some(reference)
@@ -37,12 +56,17 @@ class AbcTuneBuilder {
     this
   }
 
+  def addNoteElement(noteElement: AbcNoteElement): AbcTuneBuilder = {
+    this.noteElements += noteElement
+    this
+  }
+
   def build(): AbcTune = {
     if (null == key) {
       throw new IllegalArgumentException("Cannot build AbcTune with null key")
     }
 
-    new AbcTune(reference, title, meter, key, composer)
+    new AbcTune(this)
   }
 
 }
