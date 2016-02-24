@@ -22,6 +22,12 @@ case class AbcBar(xs: Seq[AbcNoteElement]) extends AbcNoteElement
 
 case class AbcNote(note: String) extends AbcNoteElement
 
+case class AbcBrokenRythm(note1: AbcNote, note2: AbcNote) extends AbcNoteElement
+
+case class AbcTriplet(note1: AbcNote, note2: AbcNote, note3: AbcNote) extends AbcNoteElement
+
+case class AbcChord(chord: String) extends AbcNoteElement
+
 class AbcTuneBuilder {
 
   var reference: Option[String] = None

@@ -50,14 +50,44 @@ class AbcTuneParserSpec extends UnitSpec {
   }
 
   it should "read notes" in {
-    assertResult(List(AbcBar(List(AbcNote("c2"), AbcNote("e"), AbcNote("c"), AbcNote("C2"), AbcNote("d"), AbcNote("B"))))) {
+    assertResult(List(AbcBar(List(AbcNote("c"), AbcNote("e"), AbcNote("c"), AbcNote("C"), AbcNote("d"), AbcNote("B"))))) {
       parsing("c2ec C2dB")(AbcTuneParser.notes)
+    }
+  }
+
+  it should "read dotted notes" in {
+    assertResult(AbcBrokenRythm(AbcNote("A"), AbcNote("B"))) {
+      parsing("A>B")(AbcTuneParser.brokenRythm)
+    }
+  }
+
+  it should "read triplets" in {
+    assertResult(AbcTriplet(AbcNote("F"), AbcNote("G"), AbcNote("A"))) {
+      parsing("(3F/G/A/")(AbcTuneParser.triplet)
+    }
+  }
+
+  it should "read lower and uppper octave notes" in {
+    assertResult(List(AbcNote("A"), AbcNote("A,"), AbcNote("A,,"), AbcNote("A'"), AbcNote("A''"))) {
+      parsing("AA,A,,A'2A''")(AbcTuneParser.rep(AbcTuneParser.note))
+    }
+  }
+
+  it should "read chords" in {
+    assertResult(AbcChord("Em")) {
+      parsing("\"Em\"")(AbcTuneParser.chord)
     }
   }
 
   it should "read bars" in {
     assertResult(List(AbcBar(List(AbcNote("A"), AbcNote("B"))), AbcBar(List(AbcNote("C"), AbcNote("D"))), AbcBar(List(AbcNote("E"), AbcNote("F"))))) {
       parsing("A B|C D|EF")(AbcTuneParser.notes)
+    }
+  }
+
+  it should "read a bar with chords and notes" in {
+    assertResult(AbcBar(List(AbcChord("Em"), AbcNote("A"), AbcNote("B"), AbcChord("Dm")))) {
+      parsing("\"Em\"A B \"Dm\"")(AbcTuneParser.bar)
     }
   }
 
