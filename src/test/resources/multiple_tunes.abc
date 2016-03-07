@@ -11,6 +11,7 @@ Q:3/8=60
 K:Em
 e|"Em"B2e G2e|B2e E2G|"B7"F>GA "Em"G>AB|"B7"A>GF "Em"G2 e|"Em"B2e G2e|B2e E2G|"B7"F>GA "Em"G>AB|"B7"A>GF "Em"E2 e||
 "Am"c2e cde|A2c ABc|"D"FGA "Em"GFE|"D"DEF "Em"B,2g|"C"e2g e>fg|c2e c>de|"D"d>cB "B7"A>GF|"Em"E3 E2 A||
+|:"Em"B>cB "Am"c3|"Em"B>cB "Am"e3|"Em"B>cB "B7"A>GF|"Em"G2F E2 (3F/G/A/|"Em"B>cB "Am"c3|"Em"B>cB "Am"e3|"Em"B>cB "B7"A>GF|"Em"E3 E3:|
 
 X:1001
 T:Aiken Drum
@@ -25,3 +26,33 @@ L:1/8
 Q:1/4=140
 K:D
 de|"D"f2 f2 gfed|"G"B4 d3 B|"D"A3 B d2 A2|"E7"f2 e2 "A7"e2 de|"D"f2 f2 gfed|"G"B4 d3 B|"A7"A2 A2 B2 c2|"D"d6:|
+|:de|"D"f2 f2 f2 ed|"G"g2 g2 b3 g|"D"f2 a2 f2 d2|"Em"f2 e2 "A7"e2 de|"D"f2 f2 gfed|"G"B4 d3 B|"A7"A2 A2 B2 c2|"D"d6:|
+
+X:1016
+T:Albert Farmer's Bonfire Tune
+R:Polka
+C:Trad.
+O:England, Surrey
+Z:Paul Hardy's Session Tunebook 2015 (see www.paulhardy.net). Creative Commons cc by-nc-sa licenced.
+M:4/4
+L:1/8
+Q:1/4=140
+K:D
+d>e|"D"f3d A2F2|"G"G2GF G4|"A7"edcA B2c2|"D"dffd A2de|f3d A2F2|"G"G2GF G4|"A7"edcA B2c2|"D"d6:|
+|:de|"D"f2fd f2f2|"A7"gefd e3f|"G"gfed cABc|"D"dffd A2de|f3d A2F2|"G"G2GF G4|"A7"edcA B2c2|"D"d6:|
+
+X:1013
+T:Alexander's Hornpipe
+T:Sandlark Hornpipe
+R:Hornpipe
+C:Trad.
+O:Ireland
+Z:Paul Hardy's Session Tunebook 2015 (see www.paulhardy.net). Creative Commons cc by-nc-sa licenced.
+M:4/4
+L:1/8
+Q:1/4=160
+K:D
+(3ABc|"D"dAFA DFAd|fdcd "A"Acef|"Em"g2ge "D"fdcd|"A"(3efe (3dcB "D"A2 (3ABc|
+"D"dAFA DFAd|fdcd "A"A2ef|"Em"g2ge "D"fdcd|"A"(3efe dc "D"d2:|
+|:AG|"D"FAdA FAdA|"G"GBdB GBdB|"A"Acec Acec|"D"dfaf (3gfe dA|
+"D"FAdA FAdA|"G"GBdB GBdB|"A"Acef "G"gecd|"A"(3efe dc "D"d2:|

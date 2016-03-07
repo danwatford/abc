@@ -124,8 +124,8 @@ class AbcTuneParserSpec extends UnitSpec {
     val input = new CharSequenceReader(s)
     phraseParser(input) match {
       case AbcTuneParser.Success(t,_)     => t
-      case AbcTuneParser.NoSuccess(msg,_) => throw new IllegalArgumentException(
-        "Could not parse '" + s + "': " + msg)
+      case AbcTuneParser.NoSuccess(msg, next) => throw new IllegalArgumentException(
+        "Could not parse '" + s + "': " + msg + "\nNext is: " + next.pos)
     }
   }
 }
