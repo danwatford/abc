@@ -1,4 +1,4 @@
-package com.foomoo.abc.parsing
+package com.foomoo.abc.notation.parsing
 
 import java.net.URI
 

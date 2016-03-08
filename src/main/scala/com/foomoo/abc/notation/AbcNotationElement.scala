@@ -1,4 +1,4 @@
-package com.foomoo.abc
+package com.foomoo.abc.notation
 
 /**
   * Represents an element of ABC notation. Does not reflect the structure of a tune.
@@ -22,7 +22,9 @@ case class AbcNotationHeader(lines: List[AbcNotationHeaderLine])
   */
 sealed trait AbcNotationBodyElement
 
-case class AbcWhitespaceNotation(whitespace: String) extends AbcNotationBodyElement
+case class AbcBodyWhitespaceNotation(whitespace: String) extends AbcNotationBodyElement
+
+case class AbcBodyNewLine() extends AbcNotationBodyElement
 
 case class AbcBodyLineContinuation() extends AbcNotationBodyElement
 
@@ -56,28 +58,16 @@ case class AbcRepeatNotation(marker: String) extends AbcNotationBodyElement
 
 case class AbcNumberedRepeatNotation(marker: String) extends AbcNotationBodyElement
 
-case class AbcBodyInlineComment(comment: String) extends AbcNotationBodyElement
+case class AbcBodyCommentNotation(comment: String) extends AbcNotationBodyElement
 
-case class AbcBodyInlineInformationField(key: Char, value: String) extends AbcNotationBodyElement
-
-
-/**
-  * Represents a line of ABC notation found in the body of a tune.
-  */
-sealed trait AbcNotationBodyLine
-
-case class AbcNotationBodyLineOfElements(elements: List[AbcNotationBodyElement]) extends AbcNotationBodyLine
-
-case class AbcNotationBodyInformationField(key: Char, value: String) extends AbcNotationBodyLine
-
-case class AbcNotationBodyLineComment(comment: String) extends AbcNotationBodyLine
+case class AbcBodyInformationFieldNotation(key: Char, value: String) extends AbcNotationBodyElement
 
 /**
   * Represents the body of an ABC notation tune.
   *
-  * @param lines The lines making up the body of an ABC tune.
+  * @param elements The lines making up the body of an ABC tune.
   */
-case class AbcNotationBody(lines: List[AbcNotationBodyLine])
+case class AbcNotationBody(elements: List[AbcNotationBodyElement])
 
 /**
   * Represents an ABC notation tune.
