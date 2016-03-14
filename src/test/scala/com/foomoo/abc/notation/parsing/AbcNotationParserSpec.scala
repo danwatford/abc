@@ -3,8 +3,8 @@ package com.foomoo.abc.notation.parsing
 import java.net.URI
 
 import com.foomoo.abc._
-import com.foomoo.abc.notation._
 import com.foomoo.abc.notation.AbcNotationTestSupport._
+import com.foomoo.abc.notation._
 
 import scala.io.Source
 import scala.util.parsing.input.CharSequenceReader
@@ -140,13 +140,13 @@ class AbcNotationParserSpec extends UnitSpec {
   }
 
   it should "read inline information fields" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcBodyInformationFieldNotation('M', "6/4"), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcBodyInformationFieldNotation("M", "6/4"), NOTE_B))) {
       parseBody("A[M:6/4]B")
     }
   }
 
   it should "read inline information fields following bars" in {
-    assertResult(AbcNotationBody(List(AbcBarNotation("|"), AbcBodyInformationFieldNotation('M', "6/4")))) {
+    assertResult(AbcNotationBody(List(AbcBarNotation("|"), AbcBodyInformationFieldNotation("M", "6/4")))) {
       parseBody("|[M:6/4]")
     }
   }
@@ -160,7 +160,7 @@ class AbcNotationParserSpec extends UnitSpec {
     }
   }
 
-  it should "ready body comment lines on the last line of input" in {
+  it should "read body comment lines on the last line of input" in {
     assertResult(AbcNotationBody(List(NOTE_A, BODY_NEWLINE, AbcBodyCommentNotation("body comment")))) {
       parseBody(
         """A
@@ -170,13 +170,13 @@ class AbcNotationParserSpec extends UnitSpec {
 
   it should "read a tune's reference" in {
     assertResult(List("1")) {
-      headerValue(parseTune(tuneContents), 'X')
+      headerValue(parseTune(tuneContents), "X")
     }
   }
 
   it should "read a tune's key" in {
     assertResult(List("G")) {
-      headerValue(parseTune(tuneContents), 'K')
+      headerValue(parseTune(tuneContents), "K")
     }
   }
 

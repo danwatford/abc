@@ -51,7 +51,7 @@ object AbcNotationProcessor {
           accumulator match {
             case Nil => List(element)
 
-            case AbcNotationHeaderInformationField('+', continuationFieldValue) :: xs =>
+            case AbcNotationHeaderInformationField("+", continuationFieldValue) :: xs =>
               // Merge the continuation field at the head of the accumulator with the new element and prepend
               // to the tail of the accumulator.
               AbcNotationHeaderInformationField(key, value + continuationFieldValue) :: xs

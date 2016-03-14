@@ -1,6 +1,5 @@
 package com.foomoo.abc.notation.parsing
 
-import com.foomoo.abc._
 import com.foomoo.abc.notation._
 
 import scala.util.parsing.combinator.RegexParsers
@@ -74,7 +73,7 @@ trait AbcNotationParser extends DebugRegexParsers {
     *
     * @return A Parser of AbcBodyInformationFieldNotation
     */
-  def tuneBodyInlineInformationField: Parser[AbcBodyInformationFieldNotation] = "[" ~> """[H-Wh-w+]:""".r ~ """[^\]]*""".r <~ "]" ^^ { case fieldKey ~ value => AbcBodyInformationFieldNotation(fieldKey.charAt(0), value) }
+  def tuneBodyInlineInformationField: Parser[AbcBodyInformationFieldNotation] = "[" ~> """[H-Wh-w+]:""".r ~ """[^\]]*""".r <~ "]" ^^ { case fieldKey ~ value => AbcBodyInformationFieldNotation(fieldKey.substring(0, 1), value) }
 
   /**
     * Parses an AbcBodyInformationFieldNotation at the start of a line based on an H-W, h-w or plus symbol (+)
@@ -88,7 +87,7 @@ trait AbcNotationParser extends DebugRegexParsers {
     * @return A Parser of AbcBodyInformationFieldNotation.
     */
   def tuneBodyInformationFieldLine: Parser[AbcBodyInformationFieldNotation] =
-    """[H-Wh-w+]:""".r ~ nonLinebreakString <~ linebreak ^^ { case fieldKey ~ value => AbcBodyInformationFieldNotation(fieldKey.charAt(0), value) }
+    """[H-Wh-w+]:""".r ~ nonLinebreakString <~ linebreak ^^ { case fieldKey ~ value => AbcBodyInformationFieldNotation(fieldKey.substring(0, 1), value) }
 
   /**
     * Parses AbcBodyCommentNotation based on the percent symbol and all following characters up to but not including any line break.
@@ -133,44 +132,21 @@ trait AbcNotationParser extends DebugRegexParsers {
       case elementList: List[AbcNotationBodyElement] => elementList
     }
 
-  //  {
-  //        case informationField: AbcBodyInformationFieldNotation => List()
-  //        case elementList => List()
-  //      }
-
-  //      (rep1(tuneBodyInlineInformationField | tie | triplet | slurStart | slurEnd | chord | brokenRythm |
-  //        note | rest | numberedRepeatMarker | repeatMarker | barMarker | unisonStart | unisonEnd | graceStart |
-  //        graceEnd | tuneBodyWhiteSpace | tuneBodyInlineComment) ~ opt(bodyLineContination) ~ (linebreak | eoi)) ^^
-  //
-  //      {
-  //        case informationField: AbcBodyInformationFieldNotation => List(informationField)
-  //        case elementList ~ Some(continuation) ~ newLine => elementList ++ continuation ++ newLine
-  //        case elementList ~ None ~ newLine => elementList ++ newLine
-  //      }
-  //
-
   def tuneBody: Parser[AbcNotationBody] = rep(tuneBodyLine) ^^ { case lines => AbcNotationBody(lines.flatten) }
-
-  //    rep1(tuneBodyInlineInformationField | tie | triplet | slurStart | slurEnd | chord | brokenRythm |
-  //      note | rest | numberedRepeatMarker | repeatMarker | barMarker | unisonStart | unisonEnd | graceStart |
-  //      graceEnd | tuneBodyWhiteSpace | tuneBodyInlineComment) ~ opt(bodyLineContination) ~ (linebreak | eoi) ^^ {
-  //      case elements ~ AbcBodyLineContinuation() => AbcNotationBodyLineOfElements(elements :+ AbcBodyLineContinuation())
-  //      case elements ~ _ => AbcNotationBodyLineOfElements(elements)
-  //    }
 
   // An information field value runs to the end of the line. It may contain an inline comment which will need to be
   // stripped out in later processing.
   def informationFieldValue: Parser[String] =
     """[^\r\n]*""".r <~ linebreak
 
-  def refInformationField: Parser[AbcNotationHeaderInformationField] = "X:" ~> informationFieldValue ^^ { case value => AbcNotationHeaderInformationField('X', value) }
+  def refInformationField: Parser[AbcNotationHeaderInformationField] = "X:" ~> informationFieldValue ^^ { case value => AbcNotationHeaderInformationField("X", value) }
 
-  def keyInformationField: Parser[AbcNotationHeaderInformationField] = "K:" ~> informationFieldValue ^^ { case value => AbcNotationHeaderInformationField('K', value) }
+  def keyInformationField: Parser[AbcNotationHeaderInformationField] = "K:" ~> informationFieldValue ^^ { case value => AbcNotationHeaderInformationField("K", value) }
 
   // An information field value runs to the end of the line. It may contain an inline comment which will need to be
   // stripped out in later processing.
   def informationField: Parser[AbcNotationHeaderInformationField] =
-    """^[ABCDFGHILMmNOPQRrSTUVWZ+]:""".r ~ informationFieldValue ^^ { case fieldKey ~ values => AbcNotationHeaderInformationField(fieldKey.charAt(0), values) }
+    """^[ABCDFGHILMmNOPQRrSTUVWZ+]:""".r ~ informationFieldValue ^^ { case fieldKey ~ values => AbcNotationHeaderInformationField(fieldKey.substring(0, 1), values) }
 
   def tuneHeader: Parser[AbcNotationHeader] =
     refInformationField ~ rep(informationField) ~ keyInformationField ^^ { case refField ~ fieldList ~ keyfield => AbcNotationHeader(refField :: keyfield :: fieldList) }

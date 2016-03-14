@@ -10,7 +10,7 @@ sealed trait AbcNotationElement
   */
 sealed trait AbcNotationHeaderLine
 
-case class AbcNotationHeaderInformationField(key: Char, value: String) extends AbcNotationHeaderLine
+case class AbcNotationHeaderInformationField(key: String, value: String) extends AbcNotationHeaderLine
 
 case class AbcNotationHeaderLineComment(comment: String) extends AbcNotationHeaderLine
 
@@ -30,7 +30,7 @@ case class AbcBodyLineContinuation() extends AbcNotationBodyElement
 
 case class AbcNoteNotation(note: String) extends AbcNotationBodyElement
 
-case class AbcBrokenRythmNotation(direction: String) extends AbcNotationBodyElement
+case class AbcBrokenRythmNotation(brokenRythmDirection: String) extends AbcNotationBodyElement
 
 case class AbcTripletNotation() extends AbcNotationBodyElement
 
@@ -52,15 +52,15 @@ case class AbcGraceStartNotation() extends AbcNotationBodyElement
 
 case class AbcGraceEndNotation() extends AbcNotationBodyElement
 
-case class AbcBarNotation(marker: String) extends AbcNotationBodyElement
+case class AbcBarNotation(barMarker: String) extends AbcNotationBodyElement
 
-case class AbcRepeatNotation(marker: String) extends AbcNotationBodyElement
+case class AbcRepeatNotation(repeatMarker: String) extends AbcNotationBodyElement
 
-case class AbcNumberedRepeatNotation(marker: String) extends AbcNotationBodyElement
+case class AbcNumberedRepeatNotation(numberedRepeatMarker: String) extends AbcNotationBodyElement
 
 case class AbcBodyCommentNotation(comment: String) extends AbcNotationBodyElement
 
-case class AbcBodyInformationFieldNotation(key: Char, value: String) extends AbcNotationBodyElement
+case class AbcBodyInformationFieldNotation(key: String, value: String) extends AbcNotationBodyElement
 
 /**
   * Represents the body of an ABC notation tune.
