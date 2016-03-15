@@ -67,6 +67,8 @@ trait AbcNotationParser extends DebugRegexParsers {
 
   def numberedRepeatMarker: Parser[AbcNumberedRepeatNotation] = (regex("""\|?\[\d""".r) | regex(""":?\|\d""".r)) ^^ { case markerString => AbcNumberedRepeatNotation(markerString) }
 
+  def scoreLineBreak: Parser[AbcBodyScoreLineBreak] = "$" ^^ { case _ => AbcBodyScoreLineBreak() }
+
   /**
     * The inline information field consists of the open square-bracket immediately followed by an H-W, h-w or plus
     * symbol (+), and then followed by a colon. The information field continues to the close square-bracket, but cannot cross a line break.
@@ -118,7 +120,7 @@ trait AbcNotationParser extends DebugRegexParsers {
   def tuneBodyLineOfElements: Parser[List[AbcNotationBodyElement]] =
     rep1(tuneBodyInlineInformationField | tie | triplet | slurStart | slurEnd | chord | brokenRythm |
       note | rest | numberedRepeatMarker | repeatMarker | barMarker | unisonStart | unisonEnd | graceStart |
-      graceEnd | tuneBodyWhiteSpace | tuneBodyInlineComment) ~ opt(bodyLineContination) ~ (linebreak | eoi) ^^ {
+      graceEnd | scoreLineBreak | tuneBodyWhiteSpace | tuneBodyInlineComment) ~ opt(bodyLineContination) ~ (linebreak | eoi) ^^ {
       case elementList ~ Some(continuation) ~ '\n' => elementList :+ AbcBodyLineContinuation() :+ AbcBodyNewLine()
       case elementList ~ Some(continuation) ~ _ => elementList :+ AbcBodyLineContinuation()
       case elementList ~ None ~ '\n' => elementList :+ AbcBodyNewLine()
@@ -129,7 +131,13 @@ trait AbcNotationParser extends DebugRegexParsers {
     (tuneBodyLineComment | tuneBodyInformationFieldLine | tuneBodyLineOfElements) ^^ {
       case lineComment: AbcBodyCommentNotation => List(lineComment)
       case informationField: AbcBodyInformationFieldNotation => List(informationField)
-      case elementList: List[AbcNotationBodyElement] => elementList
+
+        // Use flatMap to convice the compiler (and avoid warnings) that only a list of AbcNotationBodyElements
+        // will be returned.
+      case elementList: List[Any] => elementList flatMap {
+        case element: AbcNotationBodyElement => Some(element)
+        case _ => None
+      }
     }
 
   def tuneBody: Parser[AbcNotationBody] = rep(tuneBodyLine) ^^ { case lines => AbcNotationBody(lines.flatten) }

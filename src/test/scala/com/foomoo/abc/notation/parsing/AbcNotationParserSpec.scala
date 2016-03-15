@@ -13,9 +13,11 @@ class AbcNotationParserSpec extends UnitSpec {
   val resource: URI = getClass.getResource("/speed_the_plough.abc").toURI
   val multipleTuneResource: URI = getClass.getResource("/multiple_tunes.abc").toURI
   val pghSessionTunebookResource: URI = getClass.getResource("/pgh_session_tunebook.abc").toURI
+  val rvw2Resource: URI = getClass.getResource("/rvw2-1.abc").toURI
   val tuneContents: String = Source.fromFile(resource, "UTF-8").mkString
   val multipleTuneContents: String = Source.fromFile(multipleTuneResource, "UTF-8").mkString
   val pghSessionTunebookContents: String = Source.fromFile(pghSessionTunebookResource, "UTF-8").mkString
+  val rvw2Contents: String = Source.fromFile(rvw2Resource, "UTF-8").mkString
 
   "The AbcNotationParser" should "read notes" in {
     assertResult(AbcNotationBody(List(NOTE_c, NOTE_e, NOTE_c, WHITESPACE, NOTE_C, NOTE_d, NOTE_B))) {
@@ -168,6 +170,12 @@ class AbcNotationParserSpec extends UnitSpec {
     }
   }
 
+  it should "read $ score line breaks" in {
+    assertResult(AbcNotationBody(List(NOTE_A, SCORE_LINEBREAK, NOTE_B, SCORE_LINEBREAK, NOTE_C))) {
+      parseBody("A$B$C")
+    }
+  }
+
   it should "read a tune's reference" in {
     assertResult(List("1")) {
       headerValue(parseTune(tuneContents), "X")
@@ -193,6 +201,14 @@ class AbcNotationParserSpec extends UnitSpec {
 
     assertResult(518) {
       pghNotation.size
+    }
+  }
+
+  it should "read Vaughan Williams transcription" in {
+    val rvwNotation = parseTunes(rvw2Contents)
+
+    assertResult(3) {
+      rvwNotation.size
     }
   }
 

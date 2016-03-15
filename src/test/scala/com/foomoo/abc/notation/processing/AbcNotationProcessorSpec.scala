@@ -44,4 +44,12 @@ class AbcNotationProcessorSpec extends UnitSpec {
     assertResult(true)(joinedElements.containsSlice(List(NOTE_C, NOTE_D)))
   }
 
+  it should "extract a tune's note sequence" in {
+    val expectedNotes: Seq[AbcNoteNotation] = Seq(NOTE_A, NOTE_B, NOTE_C, NOTE_D)
+
+    assertResult(expectedNotes) {
+      AbcNotationProcessor.simpleNoteExtract(TEST_TUNE)
+    }
+  }
+
 }

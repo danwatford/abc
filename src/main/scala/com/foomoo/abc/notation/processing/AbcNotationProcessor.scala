@@ -115,4 +115,20 @@ object AbcNotationProcessor {
     AbcTuneNotation(AbcNotationHeader(joinedHeaderLines), AbcNotationBody(joinedBodyElements))
   }
 
+  /**
+    * Processes the given AbcTuneNotation to produce a sequence of the AbcNoteNotations found within it.
+    *
+    * This simple note extraction does not examine the structure of a tune, instead it filters the list of
+    * elements in the tunes body to return the desired case class instances.
+    *
+    * @param tuneNotation The tune notation to process.
+    * @return The sequence of AbcNoteNotation objects found in the tune.
+    */
+  def simpleNoteExtract(tuneNotation: AbcTuneNotation): Seq[AbcNoteNotation] = {
+    tuneNotation.body.elements flatMap {
+      case note: AbcNoteNotation => Some(note)
+      case _ => None
+    }
+  }
+
 }

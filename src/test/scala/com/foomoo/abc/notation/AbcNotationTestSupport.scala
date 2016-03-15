@@ -30,6 +30,8 @@ object AbcNotationTestSupport {
   val BODY_NEWLINE = AbcBodyNewLine()
   val BODY_CONTINUATION = AbcBodyLineContinuation()
 
+  val SCORE_LINEBREAK = AbcBodyScoreLineBreak()
+
   val TEST_HEADER_LINES = List(
     AbcNotationHeaderInformationField("X", "1"),
     AbcNotationHeaderLineComment("Test Comment"),

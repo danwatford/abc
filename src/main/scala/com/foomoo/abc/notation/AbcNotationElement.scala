@@ -26,6 +26,8 @@ case class AbcBodyWhitespaceNotation(whitespace: String) extends AbcNotationBody
 
 case class AbcBodyNewLine() extends AbcNotationBodyElement
 
+case class AbcBodyScoreLineBreak() extends AbcNotationBodyElement
+
 case class AbcBodyLineContinuation() extends AbcNotationBodyElement
 
 case class AbcNoteNotation(note: String) extends AbcNotationBodyElement
