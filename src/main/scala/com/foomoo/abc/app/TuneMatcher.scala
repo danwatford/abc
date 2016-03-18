@@ -4,8 +4,9 @@ import java.nio.file.{Path, Paths}
 import java.util.Calendar
 
 import com.foomoo.abc.notation.parsing.AbcNotationParser
-import com.foomoo.abc.notation.processing.AbcNotationProcessor
 import com.foomoo.abc.notation.{AbcNotationHeader, AbcNotationHeaderInformationField, AbcNoteNotation, AbcTuneNotation}
+import com.foomoo.abc.service.SubsequenceMatchService
+import com.foomoo.abc.service.SubsequenceMatchService.NoteSequence
 
 import scala.io.Source
 import scala.util.parsing.input.CharSequenceReader
@@ -27,7 +28,7 @@ object TuneMatcher extends App {
   val tunes: Seq[AbcTuneNotation] = tuneFileStrings.flatMap { tuneFileString =>
     val input = new CharSequenceReader(tuneFileString)
     AbcNotationParser.tunes(input) match {
-      case AbcNotationParser.Success(tunes, _) => tunes
+      case AbcNotationParser.Success(ts, _) => ts
       case AbcNotationParser.NoSuccess(msg, next) => throw new IllegalArgumentException(
         msg + "\nNext is: " + next.pos)
     }
@@ -36,50 +37,23 @@ object TuneMatcher extends App {
   println(Calendar.getInstance().getTime)
   println(s"Read ${tunes.length} tunes")
 
-
-  // Map each tune to a sequence of its notes.
-  // Limit the number of tunes to process with take() function.
-  private val tuneSequencesMap: Map[AbcTuneNotation, Seq[AbcNoteNotation]] = tunes take 100 map (tune => (tune, AbcNotationProcessor.simpleNoteExtract(tune))) toMap
-
-  // For each tune sequence, build a set of 16 note sub-sequences that appear.
-  private val tuneSubSequencesMap: Map[AbcTuneNotation, Set[Seq[AbcNoteNotation]]] = tuneSequencesMap.mapValues(tuneSequenceToSubSequences)
-
-  // Get all unique sub-sequences
-  private val allSubSequences: Set[Seq[AbcNoteNotation]] = tuneSubSequencesMap flatMap (_._2) toSet
-
-  println(Calendar.getInstance().getTime)
-  println(s"Have ${allSubSequences.size} sub-sequences")
-
-  // For each sub-sequence, find the tunes which contain it.
-  private val subSequenceTunesSeq: Set[(Seq[AbcNoteNotation], Seq[AbcTuneNotation])] = allSubSequences map { subSequence =>
-    val subSequenceTunes = tuneSubSequencesMap
-      .filter { case (tune, tuneSubSeqences) => tuneSubSeqences.contains(subSequence) }
-      .map { case (tune, tuneSubSeqences) => tune }
-      .toSeq
-
-    (subSequence, subSequenceTunes)
-  }
-  println(Calendar.getInstance().getTime)
+  private val subsequenceTunesMap: Map[NoteSequence, Set[AbcTuneNotation]] = SubsequenceMatchService.getSubsequenceTunes(16, tunes)
 
   // Filter out any sequences with only one matching tune.
-  private val filteredSubSequencesTunesSeq: Set[(Seq[AbcNoteNotation], Seq[AbcTuneNotation])] = subSequenceTunesSeq.filter { case (subSequence, tuneSeq) => tuneSeq.length > 1 }
+  private val filteredSubsequenceTunesMap: Map[NoteSequence, Set[AbcTuneNotation]] = subsequenceTunesMap.filter(_._2.size > 1)
 
   println(Calendar.getInstance().getTime)
-  println(s"Have ${filteredSubSequencesTunesSeq.size} filtered sub-sequences")
+  println(s"Have ${filteredSubsequenceTunesMap.size} filtered sub-sequences")
 
-  filteredSubSequencesTunesSeq.foreach {case (subSequence, tuneSeq) =>
+  filteredSubsequenceTunesMap.foreach {case (subSequence, tuneSet) =>
 
-      val tuneTitles: Seq[String] = tuneSeq.map(tuneToTitle)
+      val tuneTitles: Set[String] = tuneSet.map(tuneToTitle)
 
       val tuneTitlesFormatted = tuneTitles.mkString("--- ", "\n--- ", "")
 
       println(subSequence.map { case AbcNoteNotation(note) => note })
-      println("appears in");
+      println("appears in")
       println(tuneTitlesFormatted)
-  }
-
-  def tuneSequenceToSubSequences(tuneSequence: Seq[AbcNoteNotation]): Set[Seq[AbcNoteNotation]] = {
-    tuneSequence.sliding(8).toSet
   }
 
   def tuneToTitle(tuneNotation: AbcTuneNotation): String = {
