@@ -78,3 +78,18 @@ case class AbcNotationBody(elements: List[AbcNotationBodyElement])
   * @param body   Tune body.
   */
 case class AbcTuneNotation(header: AbcNotationHeader, body: AbcNotationBody)
+
+/**
+  * Represents the header of an ABC file.
+  * @param lines The header lines from the file header.
+  */
+case class AbcFileHeaderNotation(lines: List[AbcNotationHeaderLine])
+
+/**
+  * Represents an ABC notation file.
+  *
+  * @param version The version field from the ABC notation file.
+  * @param tunes   The tunes from the ABC notation file.
+  */
+case class AbcFileNotation(version: String, fileHeader: AbcFileHeaderNotation, tunes: List[AbcTuneNotation])
+

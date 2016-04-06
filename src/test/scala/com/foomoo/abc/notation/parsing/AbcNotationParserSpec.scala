@@ -197,18 +197,86 @@ class AbcNotationParserSpec extends UnitSpec {
   }
 
   it should "read Paul Hardy Tunebook" in {
-    val pghNotation = parseTunes(pghSessionTunebookContents)
-
-    assertResult(518) {
-      pghNotation.size
+    inside(parseFile(pghSessionTunebookContents)) {
+      case AbcFileNotation(_, _, tuneList) => tuneList should have size 518
     }
   }
 
   it should "read Vaughan Williams transcription" in {
-    val rvwNotation = parseTunes(rvw2Contents)
+    inside(parseFile(rvw2Contents)) {
+      case AbcFileNotation(_, _, tuneList) => tuneList should have size 3
+    }
+  }
 
-    assertResult(3) {
-      rvwNotation.size
+  it should "read an ABC file without a version string" in {
+    inside(parseFile("%abc")) {
+      case AbcFileNotation(versionString, _, _) =>
+        versionString should be("")
+    }
+  }
+
+  it should "read an ABC file with a version string" in {
+    inside(parseFile("%abc-1.2")) {
+      case AbcFileNotation(versionString, _, _) =>
+        versionString should be("1.2")
+    }
+  }
+
+  it should "read an ABC file with a file header" in {
+    inside(parseFile(
+      """%abc-1.2
+        |C:Trad.
+        |%%stylesheet directive
+        |""".stripMargin)) {
+      case AbcFileNotation(_, AbcFileHeaderNotation(headerLines), _) =>
+        headerLines should contain(AbcNotationHeaderInformationField("C", "Trad."))
+    }
+  }
+
+  it should "read an ABC file with a file header and tune" in {
+    inside(parseFile(
+      """%abc
+        |C:Trad
+        |
+        |X:1
+        |K:C
+        |AB
+        |""".stripMargin)) {
+      case AbcFileNotation(_, AbcFileHeaderNotation(_), tune :: Nil) =>
+        inside(tune) {
+          case AbcTuneNotation(AbcNotationHeader(headerLines), AbcNotationBody(bodyElements)) =>
+            headerLines should contain allOf(AbcNotationHeaderInformationField("X", "1"), AbcNotationHeaderInformationField("K", "C"))
+            bodyElements should contain allOf(NOTE_A, NOTE_B)
+        }
+    }
+  }
+
+  it should "read an ABC file without a file header" in {
+    inside(parseFile(
+      """%abc
+        |
+        |X:1
+        |K:C
+        |AB
+      """.stripMargin)) {
+      case AbcFileNotation(_, AbcFileHeaderNotation(headerLines), tuneList) =>
+        headerLines shouldBe empty
+        tuneList should have size 1
+    }
+  }
+
+  it should "read an ABC file with empty lines at the end" in {
+    inside(parseFile(
+      """%abc
+        |
+        |X:1
+        |K:C
+        |AB
+        |
+        |
+        |""".stripMargin)) {
+      case AbcFileNotation(_, _, tuneList) =>
+        tuneList should have size 1
     }
   }
 
@@ -231,5 +299,7 @@ class AbcNotationParserSpec extends UnitSpec {
   private def parseTune(s: String): AbcTuneNotation = parsing(s)(AbcNotationParser.tune)
 
   private def parseTunes(s: String): List[AbcTuneNotation] = parsing(s)(AbcNotationParser.tunes)
+
+  private def parseFile(s: String): AbcFileNotation = parsing(s)(AbcNotationParser.file)
 
 }

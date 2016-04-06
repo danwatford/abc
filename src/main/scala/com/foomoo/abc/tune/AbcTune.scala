@@ -1,4 +1,4 @@
-package com.foomoo.abc
+package com.foomoo.abc.tune
 
 import scala.collection.mutable.ListBuffer
 
@@ -8,17 +8,20 @@ class AbcTune(builder: AbcTuneBuilder) {
   val meter: Option[String] = builder.meter
   val key: String = builder.key
   val composer: Option[String] = builder.composer
-  val noteElements: Seq[AbcNoteElement] = builder.noteElements.toList
+  val bodyElements: Seq[AbcStructuralElement] = builder.bodyElements.toList
 
-  override def toString: String = String.format("AbcTune(%s, %s, %s, %s, %s, %s)", reference, title, meter, key, composer, noteElements)
+  override def toString: String = String.format("AbcTune(%s, %s, %s, %s, %s, %s)", reference, title, meter, key, composer, bodyElements)
 
 }
 
+sealed trait AbcStructuralElement
+
+case class AbcRepeat(xs: Seq[AbcBar]) extends AbcStructuralElement
+
+case class AbcBar(xs: Seq[AbcNoteElement]) extends AbcStructuralElement
+
+
 sealed trait AbcNoteElement
-
-case class AbcRepeat(xs: Seq[AbcNoteElement]) extends AbcNoteElement
-
-case class AbcBar(xs: Seq[AbcNoteElement]) extends AbcNoteElement
 
 case class AbcNote(note: String) extends AbcNoteElement
 
@@ -35,7 +38,7 @@ class AbcTuneBuilder {
   var meter: Option[String] = None
   var key: String = null
   var composer: Option[String] = None
-  var noteElements = new ListBuffer[AbcNoteElement]
+  var bodyElements = new ListBuffer[AbcStructuralElement]
 
   def setReference(reference: String): AbcTuneBuilder = {
     this.reference = Some(reference)
@@ -62,8 +65,8 @@ class AbcTuneBuilder {
     this
   }
 
-  def addNoteElement(noteElement: AbcNoteElement): AbcTuneBuilder = {
-    this.noteElements += noteElement
+  def addNoteElement(structuralElement: AbcStructuralElement): AbcTuneBuilder = {
+    this.bodyElements += structuralElement
     this
   }
 

@@ -4,7 +4,7 @@ import java.nio.file.{Path, Paths}
 import java.util.Calendar
 
 import com.foomoo.abc.notation.parsing.AbcNotationParser
-import com.foomoo.abc.notation.{AbcNotationHeader, AbcNotationHeaderInformationField, AbcNoteNotation, AbcTuneNotation}
+import com.foomoo.abc.notation._
 import com.foomoo.abc.service.SubsequenceMatchService
 import com.foomoo.abc.service.SubsequenceMatchService.NoteSequence
 
@@ -25,19 +25,25 @@ object TuneMatcher extends App {
 
   // Convert each string to tunes.
   println(s"Reading ${tuneFileStrings.length} tune files")
-  val tunes: Seq[AbcTuneNotation] = tuneFileStrings.flatMap { tuneFileString =>
+  val tuneFiles: Seq[AbcFileNotation] = tuneFileStrings.map { tuneFileString =>
     val input = new CharSequenceReader(tuneFileString)
-    AbcNotationParser.tunes(input) match {
+    AbcNotationParser.file(input) match {
       case AbcNotationParser.Success(ts, _) => ts
       case AbcNotationParser.NoSuccess(msg, next) => throw new IllegalArgumentException(
         msg + "\nNext is: " + next.pos)
     }
   }
 
-  println(Calendar.getInstance().getTime)
-  println(s"Read ${tunes.length} tunes")
+  val tunes: Seq[AbcTuneNotation] = tuneFiles.flatMap(tuneFile => tuneFile.tunes)
 
-  private val subsequenceTunesMap: Map[NoteSequence, Set[AbcTuneNotation]] = SubsequenceMatchService.getSubsequenceTunes(16, tunes)
+  // Deduplicate the tunes by title.
+  val titleTuneMap: Map[String, AbcTuneNotation] = tunes.map(tune => tuneToTitle(tune) -> tune).toMap
+  val deduplicatedTunes: Seq[AbcTuneNotation] = titleTuneMap.values.toSeq
+
+  println(Calendar.getInstance().getTime)
+  println(s"Read ${deduplicatedTunes.length} tunes")
+
+  private val subsequenceTunesMap: Map[NoteSequence, Set[AbcTuneNotation]] = SubsequenceMatchService.getSubsequenceTunes(16, deduplicatedTunes)
 
   // Filter out any sequences with only one matching tune.
   private val filteredSubsequenceTunesMap: Map[NoteSequence, Set[AbcTuneNotation]] = subsequenceTunesMap.filter(_._2.size > 1)

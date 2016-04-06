@@ -156,12 +156,27 @@ trait AbcNotationParser extends DebugRegexParsers {
   def informationField: Parser[AbcNotationHeaderInformationField] =
     """^[ABCDFGHILMmNOPQRrSTUVWZ+]:""".r ~ informationFieldValue ^^ { case fieldKey ~ values => AbcNotationHeaderInformationField(fieldKey.substring(0, 1), values) }
 
+  def headerLineComment: Parser[AbcNotationHeaderLineComment] = inlineComment <~ opt(linebreak) ^^ { case commentString => AbcNotationHeaderLineComment(commentString) }
+
   def tuneHeader: Parser[AbcNotationHeader] =
     refInformationField ~ rep(informationField) ~ keyInformationField ^^ { case refField ~ fieldList ~ keyfield => AbcNotationHeader(refField :: keyfield :: fieldList) }
 
   def tune: Parser[AbcTuneNotation] = rep(emptyLine) ~> tuneHeader ~ tuneBody ^^ { case headerList ~ bodyList => AbcTuneNotation(headerList, bodyList) }
 
-  def tunes: Parser[List[AbcTuneNotation]] = rep1(tune <~ (rep1(emptyLine) | eoi))
+  def tunes: Parser[List[AbcTuneNotation]] = rep(tune <~ (rep1(emptyLine) | eoi))
+
+  def abcIdentifier: Parser[String] = """%abc[-]?""".r ~> opt(nonLinebreakString) <~ opt(linebreak) ^^ {
+    case Some(versionString) => versionString
+    case _ => ""
+  }
+
+  def fileHeader: Parser[AbcFileHeaderNotation] =
+    rep(informationField | headerLineComment) <~ opt(emptyLine) ^^ { case fieldList => AbcFileHeaderNotation(fieldList) }
+
+  def file: Parser[AbcFileNotation] = abcIdentifier ~ fileHeader ~ tunes <~ eoi ^^ {
+    case versionString ~ fileHeader ~ tuneList => AbcFileNotation(versionString, fileHeader, tuneList)
+  }
+
 }
 
 object AbcNotationParser extends AbcNotationParser
