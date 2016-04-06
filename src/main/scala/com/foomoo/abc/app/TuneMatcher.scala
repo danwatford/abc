@@ -25,7 +25,7 @@ object TuneMatcher extends App {
 
   // Convert each string to tunes.
   println(s"Reading ${tuneFileStrings.length} tune files")
-  val tuneFiles: Seq[AbcFileNotation] = tuneFileStrings.map { tuneFileString =>
+  val tuneFiles: Seq[AbcNotationFile] = tuneFileStrings.map { tuneFileString =>
     val input = new CharSequenceReader(tuneFileString)
     AbcNotationParser.file(input) match {
       case AbcNotationParser.Success(ts, _) => ts
@@ -34,19 +34,19 @@ object TuneMatcher extends App {
     }
   }
 
-  val tunes: Seq[AbcTuneNotation] = tuneFiles.flatMap(tuneFile => tuneFile.tunes)
+  val tunes: Seq[AbcNotationTune] = tuneFiles.flatMap(tuneFile => tuneFile.tunes)
 
   // Deduplicate the tunes by title.
-  val titleTuneMap: Map[String, AbcTuneNotation] = tunes.map(tune => tuneToTitle(tune) -> tune).toMap
-  val deduplicatedTunes: Seq[AbcTuneNotation] = titleTuneMap.values.toSeq
+  val titleTuneMap: Map[String, AbcNotationTune] = tunes.map(tune => tuneToTitle(tune) -> tune).toMap
+  val deduplicatedTunes: Seq[AbcNotationTune] = titleTuneMap.values.toSeq
 
   println(Calendar.getInstance().getTime)
   println(s"Read ${deduplicatedTunes.length} tunes")
 
-  private val subsequenceTunesMap: Map[NoteSequence, Set[AbcTuneNotation]] = SubsequenceMatchService.getSubsequenceTunes(16, deduplicatedTunes)
+  private val subsequenceTunesMap: Map[NoteSequence, Set[AbcNotationTune]] = SubsequenceMatchService.getSubsequenceTunes(16, deduplicatedTunes)
 
   // Filter out any sequences with only one matching tune.
-  private val filteredSubsequenceTunesMap: Map[NoteSequence, Set[AbcTuneNotation]] = subsequenceTunesMap.filter(_._2.size > 1)
+  private val filteredSubsequenceTunesMap: Map[NoteSequence, Set[AbcNotationTune]] = subsequenceTunesMap.filter(_._2.size > 1)
 
   println(Calendar.getInstance().getTime)
   println(s"Have ${filteredSubsequenceTunesMap.size} filtered sub-sequences")
@@ -57,17 +57,17 @@ object TuneMatcher extends App {
 
       val tuneTitlesFormatted = tuneTitles.mkString("--- ", "\n--- ", "")
 
-      println(subSequence.map { case AbcNoteNotation(note) => note })
+      println(subSequence.map { case AbcNotationNote(note) => note })
       println("appears in")
       println(tuneTitlesFormatted)
   }
 
-  def tuneToTitle(tuneNotation: AbcTuneNotation): String = {
+  def tuneToTitle(tuneNotation: AbcNotationTune): String = {
     headerValue(tuneNotation, "T").head
   }
 
-  def headerValue(tuneNotation: AbcTuneNotation, key: String): List[String] = tuneNotation match {
-    case AbcTuneNotation(AbcNotationHeader(headerList), _) =>
+  def headerValue(tuneNotation: AbcNotationTune, key: String): List[String] = tuneNotation match {
+    case AbcNotationTune(AbcNotationHeader(headerList), _) =>
       headerList.filter {
         case AbcNotationHeaderInformationField(headerKey, _) => headerKey == key
         case _ => false

@@ -23,7 +23,7 @@ class AbcNotationProcessorSpec extends UnitSpec {
 
     assertResult(false) {
       strippedElements exists {
-        case comment: AbcBodyCommentNotation => true
+        case comment: AbcNotationBodyComment => true
         case _ => false
       }
     }
@@ -45,7 +45,7 @@ class AbcNotationProcessorSpec extends UnitSpec {
   }
 
   it should "extract a tune's note sequence" in {
-    val expectedNotes: Seq[AbcNoteNotation] = Seq(NOTE_A, NOTE_B, NOTE_C, NOTE_D)
+    val expectedNotes: Seq[AbcNotationNote] = Seq(NOTE_A, NOTE_B, NOTE_C, NOTE_D)
 
     assertResult(expectedNotes) {
       AbcNotationProcessor.simpleNoteExtract(TEST_TUNE)

@@ -25,7 +25,7 @@ object AbcNotationProcessor {
     * @return The body notation elements with comments removed.
     */
   def removeBodyComments(bodyElements: List[AbcNotationBodyElement]) = bodyElements filter {
-    case commentElement: AbcBodyCommentNotation => false
+    case commentElement: AbcNotationBodyComment => false
     case _ => true
   }
 
@@ -82,17 +82,17 @@ object AbcNotationProcessor {
         // To ensure the first element is included in the result an extra copy is inserted at the front
         // of the element list.
         val elements: List[AbcNotationBodyElement] = bodyElements.head :: bodyElements.head :: bodyElements.tail
-        val elementPairs: List[(AbcNotationBodyElement, AbcNotationBodyElement)] = elements.zipAll(elements.tail, AbcBodyNewLine(), AbcBodyNewLine())
+        val elementPairs: List[(AbcNotationBodyElement, AbcNotationBodyElement)] = elements.zipAll(elements.tail, AbcNotationBodyNewLine(), AbcNotationBodyNewLine())
 
         val mappedElements: List[AbcNotationBodyElement] = elementPairs.map {
-          case x if x._1.isInstanceOf[AbcBodyLineContinuation] && x._2.isInstanceOf[AbcBodyNewLine] => AbcBodyLineContinuation()
-          case x if x._2.isInstanceOf[AbcBodyLineContinuation] => AbcBodyLineContinuation()
+          case x if x._1.isInstanceOf[AbcNotationBodyLineContinuation] && x._2.isInstanceOf[AbcNotationBodyNewLine] => AbcNotationBodyLineContinuation()
+          case x if x._2.isInstanceOf[AbcNotationBodyLineContinuation] => AbcNotationBodyLineContinuation()
           case x => x._2
         }
 
         // Filter out all line continuations.
         val filteredElements: List[AbcNotationBodyElement] = mappedElements.filter {
-          case continuation: AbcBodyLineContinuation => false
+          case continuation: AbcNotationBodyLineContinuation => false
           case _ => true
         }
 
@@ -107,12 +107,12 @@ object AbcNotationProcessor {
     * @param tuneNotation The tune notation to process.
     * @return The normalised tune notation.
     */
-  def normalise(tuneNotation: AbcTuneNotation): AbcTuneNotation = {
+  def normalise(tuneNotation: AbcNotationTune): AbcNotationTune = {
 
     val joinedHeaderLines: List[AbcNotationHeaderLine] = joinHeaderLines(removeHeaderComments(tuneNotation.header.lines))
     val joinedBodyElements: List[AbcNotationBodyElement] = joinBodyLine(removeBodyComments(tuneNotation.body.elements))
 
-    AbcTuneNotation(AbcNotationHeader(joinedHeaderLines), AbcNotationBody(joinedBodyElements))
+    AbcNotationTune(AbcNotationHeader(joinedHeaderLines), AbcNotationBody(joinedBodyElements))
   }
 
   /**
@@ -124,9 +124,9 @@ object AbcNotationProcessor {
     * @param tuneNotation The tune notation to process.
     * @return The sequence of AbcNoteNotation objects found in the tune.
     */
-  def simpleNoteExtract(tuneNotation: AbcTuneNotation): Seq[AbcNoteNotation] = {
+  def simpleNoteExtract(tuneNotation: AbcNotationTune): Seq[AbcNotationNote] = {
     tuneNotation.body.elements flatMap {
-      case note: AbcNoteNotation => Some(note)
+      case note: AbcNotationNote => Some(note)
       case _ => None
     }
   }

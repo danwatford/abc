@@ -26,31 +26,31 @@ class AbcNotationParserSpec extends UnitSpec {
   }
 
   it should "read sharp notes" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcNoteNotation("^B")))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationNote("^B")))) {
       parseBody("A^B")
     }
   }
 
   it should "read natural notes" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcNoteNotation("=B")))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationNote("=B")))) {
       parseBody("A=B")
     }
   }
 
   it should "read flat notes" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcNoteNotation("_B")))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationNote("_B")))) {
       parseBody("A_B")
     }
   }
 
   it should "read ties" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcTieNotation(), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationTie(), NOTE_B))) {
       parseBody("A-B")
     }
   }
 
   it should "read slurs" in {
-    assertResult(AbcNotationBody(List(AbcSlurStartNotation(), AbcChordNotation("A"), NOTE_E, NOTE_e, AbcSlurEndNotation()))) {
+    assertResult(AbcNotationBody(List(AbcNotationSlurStart(), AbcNotationChord("A"), NOTE_E, NOTE_e, AbcNotationSlurEnd()))) {
       parseBody("(\"A\"Ee)")
     }
   }
@@ -68,58 +68,58 @@ class AbcNotationParserSpec extends UnitSpec {
   }
 
   it should "read dotted notes" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcBrokenRythmNotation(">"), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBrokenRythm(">"), NOTE_B))) {
       parseBody("A>B")
     }
-    assertResult(AbcNotationBody(List(NOTE_A, AbcBrokenRythmNotation("<"), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBrokenRythm("<"), NOTE_B))) {
       parseBody("A<B")
     }
   }
 
   it should "read triplets" in {
-    assertResult(AbcNotationBody(List(AbcTripletNotation(), NOTE_A, NOTE_B, NOTE_C))) {
+    assertResult(AbcNotationBody(List(AbcNotationTriplet(), NOTE_A, NOTE_B, NOTE_C))) {
       parseBody("(3ABC")
     }
   }
 
   it should "read chords" in {
-    assertResult(AbcNotationBody(List(AbcChordNotation("Em")))) {
+    assertResult(AbcNotationBody(List(AbcNotationChord("Em")))) {
       parseBody("\"Em\"")
     }
   }
 
   it should "read bar markers" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcBarNotation("|"), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBar("|"), NOTE_B))) {
       parseBody("A|B")
     }
   }
 
   it should "read repeat markers" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcRepeatNotation("|:"), NOTE_B,
-      NOTE_C, AbcRepeatNotation(":|"), NOTE_D, AbcRepeatNotation(":|]")))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationRepeat("|:"), NOTE_B,
+      NOTE_C, AbcNotationRepeat(":|"), NOTE_D, AbcNotationRepeat(":|]")))) {
       parseBody("A|:BC:|D:|]")
     }
   }
 
   it should "read unisons" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcUnisonStartNotation(), NOTE_B,
-      NOTE_C, AbcUnisonEndNotation()))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationUnisonStart(), NOTE_B,
+      NOTE_C, AbcNotationUnisonEnd()))) {
       parseBody("A[BC]")
     }
   }
 
   it should "read grace notes" in {
-    assertResult(AbcNotationBody(List(AbcGraceStartNotation(), NOTE_A, NOTE_B,
-      AbcGraceEndNotation(), NOTE_C))) {
+    assertResult(AbcNotationBody(List(AbcNotationGraceStart(), NOTE_A, NOTE_B,
+      AbcNotationGraceEnd(), NOTE_C))) {
       parseBody("{AB}C")
     }
   }
 
   it should "read numbered repeat markers" in {
-    assertResult(AbcNotationBody(List(NOTE_B, AbcNumberedRepeatNotation("|1"),
-      WHITESPACE, NOTE_C, AbcNumberedRepeatNotation(":|2"),
-      WHITESPACE, NOTE_D, AbcBarNotation("|"), WHITESPACE,
-      AbcNumberedRepeatNotation("[3"), WHITESPACE, NOTE_E))) {
+    assertResult(AbcNotationBody(List(NOTE_B, AbcNotationNumberedRepeat("|1"),
+      WHITESPACE, NOTE_C, AbcNotationNumberedRepeat(":|2"),
+      WHITESPACE, NOTE_D, AbcNotationBar("|"), WHITESPACE,
+      AbcNotationNumberedRepeat("[3"), WHITESPACE, NOTE_E))) {
       parseBody("B|1 C:|2 D| [3 E")
     }
   }
@@ -142,19 +142,19 @@ class AbcNotationParserSpec extends UnitSpec {
   }
 
   it should "read inline information fields" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcBodyInformationFieldNotation("M", "6/4"), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBodyInformationField("M", "6/4"), NOTE_B))) {
       parseBody("A[M:6/4]B")
     }
   }
 
   it should "read inline information fields following bars" in {
-    assertResult(AbcNotationBody(List(AbcBarNotation("|"), AbcBodyInformationFieldNotation("M", "6/4")))) {
+    assertResult(AbcNotationBody(List(AbcNotationBar("|"), AbcNotationBodyInformationField("M", "6/4")))) {
       parseBody("|[M:6/4]")
     }
   }
 
   it should "read body comment lines, consuming any whitespace before the comment, and the newline after" in {
-    assertResult(AbcNotationBody(List(NOTE_A, BODY_NEWLINE, AbcBodyCommentNotation("body comment"), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, BODY_NEWLINE, AbcNotationBodyComment("body comment"), NOTE_B))) {
       parseBody(
         """A
           | %body comment
@@ -163,7 +163,7 @@ class AbcNotationParserSpec extends UnitSpec {
   }
 
   it should "read body comment lines on the last line of input" in {
-    assertResult(AbcNotationBody(List(NOTE_A, BODY_NEWLINE, AbcBodyCommentNotation("body comment")))) {
+    assertResult(AbcNotationBody(List(NOTE_A, BODY_NEWLINE, AbcNotationBodyComment("body comment")))) {
       parseBody(
         """A
           |%body comment""".stripMargin)
@@ -198,26 +198,26 @@ class AbcNotationParserSpec extends UnitSpec {
 
   it should "read Paul Hardy Tunebook" in {
     inside(parseFile(pghSessionTunebookContents)) {
-      case AbcFileNotation(_, _, tuneList) => tuneList should have size 518
+      case AbcNotationFile(_, _, tuneList) => tuneList should have size 518
     }
   }
 
   it should "read Vaughan Williams transcription" in {
     inside(parseFile(rvw2Contents)) {
-      case AbcFileNotation(_, _, tuneList) => tuneList should have size 3
+      case AbcNotationFile(_, _, tuneList) => tuneList should have size 3
     }
   }
 
   it should "read an ABC file without a version string" in {
     inside(parseFile("%abc")) {
-      case AbcFileNotation(versionString, _, _) =>
+      case AbcNotationFile(versionString, _, _) =>
         versionString should be("")
     }
   }
 
   it should "read an ABC file with a version string" in {
     inside(parseFile("%abc-1.2")) {
-      case AbcFileNotation(versionString, _, _) =>
+      case AbcNotationFile(versionString, _, _) =>
         versionString should be("1.2")
     }
   }
@@ -228,7 +228,7 @@ class AbcNotationParserSpec extends UnitSpec {
         |C:Trad.
         |%%stylesheet directive
         |""".stripMargin)) {
-      case AbcFileNotation(_, AbcFileHeaderNotation(headerLines), _) =>
+      case AbcNotationFile(_, AbcNotationFileHeader(headerLines), _) =>
         headerLines should contain(AbcNotationHeaderInformationField("C", "Trad."))
     }
   }
@@ -242,9 +242,9 @@ class AbcNotationParserSpec extends UnitSpec {
         |K:C
         |AB
         |""".stripMargin)) {
-      case AbcFileNotation(_, AbcFileHeaderNotation(_), tune :: Nil) =>
+      case AbcNotationFile(_, AbcNotationFileHeader(_), tune :: Nil) =>
         inside(tune) {
-          case AbcTuneNotation(AbcNotationHeader(headerLines), AbcNotationBody(bodyElements)) =>
+          case AbcNotationTune(AbcNotationHeader(headerLines), AbcNotationBody(bodyElements)) =>
             headerLines should contain allOf(AbcNotationHeaderInformationField("X", "1"), AbcNotationHeaderInformationField("K", "C"))
             bodyElements should contain allOf(NOTE_A, NOTE_B)
         }
@@ -259,7 +259,7 @@ class AbcNotationParserSpec extends UnitSpec {
         |K:C
         |AB
       """.stripMargin)) {
-      case AbcFileNotation(_, AbcFileHeaderNotation(headerLines), tuneList) =>
+      case AbcNotationFile(_, AbcNotationFileHeader(headerLines), tuneList) =>
         headerLines shouldBe empty
         tuneList should have size 1
     }
@@ -275,7 +275,7 @@ class AbcNotationParserSpec extends UnitSpec {
         |
         |
         |""".stripMargin)) {
-      case AbcFileNotation(_, _, tuneList) =>
+      case AbcNotationFile(_, _, tuneList) =>
         tuneList should have size 1
     }
   }
@@ -296,10 +296,10 @@ class AbcNotationParserSpec extends UnitSpec {
 
   private def parseBody(s: String): AbcNotationBody = parsing(s)(AbcNotationParser.tuneBody)
 
-  private def parseTune(s: String): AbcTuneNotation = parsing(s)(AbcNotationParser.tune)
+  private def parseTune(s: String): AbcNotationTune = parsing(s)(AbcNotationParser.tune)
 
-  private def parseTunes(s: String): List[AbcTuneNotation] = parsing(s)(AbcNotationParser.tunes)
+  private def parseTunes(s: String): List[AbcNotationTune] = parsing(s)(AbcNotationParser.tunes)
 
-  private def parseFile(s: String): AbcFileNotation = parsing(s)(AbcNotationParser.file)
+  private def parseFile(s: String): AbcNotationFile = parsing(s)(AbcNotationParser.file)
 
 }

@@ -5,32 +5,32 @@ package com.foomoo.abc.notation
   */
 object AbcNotationTestSupport {
 
-  val NOTE_A = AbcNoteNotation("A")
-  val NOTE_B = AbcNoteNotation("B")
-  val NOTE_C = AbcNoteNotation("C")
-  val NOTE_D = AbcNoteNotation("D")
-  val NOTE_E = AbcNoteNotation("E")
-  val NOTE_F = AbcNoteNotation("E")
-  val NOTE_G = AbcNoteNotation("E")
+  val NOTE_A = AbcNotationNote("A")
+  val NOTE_B = AbcNotationNote("B")
+  val NOTE_C = AbcNotationNote("C")
+  val NOTE_D = AbcNotationNote("D")
+  val NOTE_E = AbcNotationNote("E")
+  val NOTE_F = AbcNotationNote("E")
+  val NOTE_G = AbcNotationNote("E")
 
-  val NOTE_a = AbcNoteNotation("a")
-  val NOTE_b = AbcNoteNotation("b")
-  val NOTE_c = AbcNoteNotation("c")
-  val NOTE_d = AbcNoteNotation("d")
-  val NOTE_e = AbcNoteNotation("e")
-  val NOTE_f = AbcNoteNotation("f")
-  val NOTE_g = AbcNoteNotation("g")
+  val NOTE_a = AbcNotationNote("a")
+  val NOTE_b = AbcNotationNote("b")
+  val NOTE_c = AbcNotationNote("c")
+  val NOTE_d = AbcNotationNote("d")
+  val NOTE_e = AbcNotationNote("e")
+  val NOTE_f = AbcNotationNote("f")
+  val NOTE_g = AbcNotationNote("g")
 
-  val REST_Z = AbcRestNotation("Z")
-  val REST_X = AbcRestNotation("X")
-  val REST_z = AbcRestNotation("z")
-  val REST_x = AbcRestNotation("x")
+  val REST_Z = AbcNotationRest("Z")
+  val REST_X = AbcNotationRest("X")
+  val REST_z = AbcNotationRest("z")
+  val REST_x = AbcNotationRest("x")
 
-  val WHITESPACE = AbcBodyWhitespaceNotation(" ")
-  val BODY_NEWLINE = AbcBodyNewLine()
-  val BODY_CONTINUATION = AbcBodyLineContinuation()
+  val WHITESPACE = AbcNotationBodyWhitespace(" ")
+  val BODY_NEWLINE = AbcNotationBodyNewLine()
+  val BODY_CONTINUATION = AbcNotationBodyLineContinuation()
 
-  val SCORE_LINEBREAK = AbcBodyScoreLineBreak()
+  val SCORE_LINEBREAK = AbcNotationBodyScoreLineBreak()
 
   val TEST_HEADER_LINES = List(
     AbcNotationHeaderInformationField("X", "1"),
@@ -46,20 +46,20 @@ object AbcNotationTestSupport {
   val TEST_BODY_LINE_1 = List(
     NOTE_A,
     NOTE_B,
-    AbcBodyCommentNotation("Inline comment 1"),
-    AbcBodyInformationFieldNotation("K", "D"),
-    AbcBodyCommentNotation("Inline comment 2"),
-    AbcBarNotation("|"),
+    AbcNotationBodyComment("Inline comment 1"),
+    AbcNotationBodyInformationField("K", "D"),
+    AbcNotationBodyComment("Inline comment 2"),
+    AbcNotationBar("|"),
     BODY_NEWLINE
   )
-  val TEST_BODY_LINE_2 = List(AbcBodyInformationFieldNotation("M", "1"))
-  val TEST_BODY_LINE_3 = List(AbcBodyCommentNotation("Line comment 1"))
+  val TEST_BODY_LINE_2 = List(AbcNotationBodyInformationField("M", "1"))
+  val TEST_BODY_LINE_3 = List(AbcNotationBodyComment("Line comment 1"))
   val TEST_BODY_LINE_4 = List(
     NOTE_C,
     BODY_CONTINUATION,
     BODY_NEWLINE
   )
-  val TEST_BODY_LINE_5 = List(AbcBodyCommentNotation("Line comment 2"))
+  val TEST_BODY_LINE_5 = List(AbcNotationBodyComment("Line comment 2"))
   val TEST_BODY_LINE_6 = List(
     NOTE_D,
     BODY_NEWLINE
@@ -67,10 +67,10 @@ object AbcNotationTestSupport {
 
   val TEST_BODY = AbcNotationBody(List(TEST_BODY_LINE_1, TEST_BODY_LINE_2, TEST_BODY_LINE_3, TEST_BODY_LINE_4, TEST_BODY_LINE_5, TEST_BODY_LINE_6).flatten)
 
-  val TEST_TUNE = AbcTuneNotation(TEST_HEADER, TEST_BODY)
+  val TEST_TUNE = AbcNotationTune(TEST_HEADER, TEST_BODY)
 
-  def headerValue(tuneNotation: AbcTuneNotation, key: String): List[String] = tuneNotation match {
-    case AbcTuneNotation(AbcNotationHeader(headerList), _) =>
+  def headerValue(tuneNotation: AbcNotationTune, key: String): List[String] = tuneNotation match {
+    case AbcNotationTune(AbcNotationHeader(headerList), _) =>
       headerList.filter {
         case AbcNotationHeaderInformationField(headerKey, _) => headerKey == key
         case _ => false
