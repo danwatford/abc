@@ -116,10 +116,10 @@ class AbcNotationParserSpec extends UnitSpec {
   }
 
   it should "read numbered repeat markers" in {
-    assertResult(AbcNotationBody(List(NOTE_B, AbcNotationNumberedRepeat("|1"),
-      WHITESPACE, NOTE_C, AbcNotationNumberedRepeat(":|2"),
+    assertResult(AbcNotationBody(List(NOTE_B, AbcNotationNumberedRepeat(1),
+      WHITESPACE, NOTE_C, AbcNotationNumberedRepeat(2),
       WHITESPACE, NOTE_D, AbcNotationBar("|"), WHITESPACE,
-      AbcNotationNumberedRepeat("[3"), WHITESPACE, NOTE_E))) {
+      AbcNotationNumberedRepeat(3), WHITESPACE, NOTE_E))) {
       parseBody("B|1 C:|2 D| [3 E")
     }
   }

@@ -53,7 +53,7 @@ case class AbcNotationBar(barMarker: String) extends AbcNotationBodyElement
 
 case class AbcNotationRepeat(repeatMarker: String) extends AbcNotationBodyElement
 
-case class AbcNotationNumberedRepeat(numberedRepeatMarker: String) extends AbcNotationBodyElement
+case class AbcNotationNumberedRepeat(number: Int) extends AbcNotationBodyElement
 
 case class AbcNotationBodyComment(comment: String) extends AbcNotationBodyElement
 

@@ -4,6 +4,8 @@ import com.foomoo.abc.UnitSpec
 import com.foomoo.abc.notation._
 import com.foomoo.abc.tune._
 
+import scala.collection.immutable.::
+
 /**
   * Tests for the AbcNotationConverter.
   */
@@ -21,6 +23,85 @@ class AbcNotationConverterSpec extends UnitSpec {
     inside(AbcNotationConverter.convertBody(testBody)) {
       case AbcBar(barNoteElements) :: Nil =>
         barNoteElements should contain allOf(AbcNote("A"), AbcNote("B"), AbcNote("C"))
+    }
+  }
+
+  it should "read a repeated section" in {
+    val testBody = AbcNotationBody(List(AbcNotationRepeat("|:"), NOTE_A, NOTE_B, AbcNotationRepeat(":|")))
+
+    inside(AbcNotationConverter.convertBody(testBody)) {
+      case AbcRepeat(AbcBar(barNoteElements) :: Nil) :: Nil =>
+        barNoteElements should contain allOf(AbcNote("A"), AbcNote("B"))
+    }
+  }
+
+  it should "read a repeated section where the start repeat marker is missing" in {
+    val testBody = AbcNotationBody(List(NOTE_A, NOTE_B, AbcNotationRepeat(":|")))
+
+    inside(AbcNotationConverter.convertBody(testBody)) {
+      case AbcRepeat(AbcBar(barNoteElements) :: Nil) :: Nil =>
+        barNoteElements should contain allOf(AbcNote("A"), AbcNote("B"))
+    }
+  }
+
+  it should "read a repeated section where the end repeat marker is missing" in {
+    val testBody = AbcNotationBody(List(AbcNotationRepeat("|:"), NOTE_A, NOTE_B))
+
+    inside(AbcNotationConverter.convertBody(testBody)) {
+      case AbcRepeat(AbcBar(barNoteElements) :: Nil) :: Nil =>
+        barNoteElements should contain allOf(AbcNote("A"), AbcNote("B"))
+    }
+  }
+
+  it should "read multiple repeated sections" in {
+    val testBody = AbcNotationBody(List(AbcNotationRepeat("|:"), NOTE_A, NOTE_B, AbcNotationRepeat(":|"),
+      AbcNotationRepeat("|:"), NOTE_C, NOTE_D, AbcNotationRepeat(":|")))
+
+    inside(AbcNotationConverter.convertBody(testBody)) {
+      case AbcRepeat(AbcBar(bar1NoteElements) :: Nil) :: AbcRepeat(AbcBar(bar2NoteElements) :: Nil) :: Nil =>
+        bar1NoteElements should contain allOf(AbcNote("A"), AbcNote("B"))
+        bar2NoteElements should contain allOf(AbcNote("C"), AbcNote("D"))
+    }
+  }
+
+  it should "read multiple repeated sections where first start marker and last end marker are missing" in {
+    val testBody = AbcNotationBody(List(NOTE_A, NOTE_B, AbcNotationRepeat(":|"),
+      AbcNotationRepeat("|:"), NOTE_C, NOTE_D))
+
+    inside(AbcNotationConverter.convertBody(testBody)) {
+      case AbcRepeat(AbcBar(bar1NoteElements) :: Nil) :: AbcRepeat(AbcBar(bar2NoteElements) :: Nil) :: Nil =>
+        bar1NoteElements should contain allOf(AbcNote("A"), AbcNote("B"))
+        bar2NoteElements should contain allOf(AbcNote("C"), AbcNote("D"))
+    }
+  }
+
+  it should "read multiple repeated sections using merged start and end repeat markers" in {
+    val testBody = AbcNotationBody(List(NOTE_A, NOTE_B, AbcNotationRepeat(":||:"), NOTE_C, NOTE_D))
+
+    inside(AbcNotationConverter.convertBody(testBody)) {
+      case AbcRepeat(AbcBar(bar1NoteElements) :: Nil) :: AbcRepeat(AbcBar(bar2NoteElements) :: Nil) :: Nil =>
+        bar1NoteElements should contain allOf(AbcNote("A"), AbcNote("B"))
+        bar2NoteElements should contain allOf(AbcNote("C"), AbcNote("D"))
+    }
+  }
+
+  it should "read numbered repeat sections" in {
+    val testBody = AbcNotationBody(List(NOTE_A, AbcNotationNumberedRepeat(1), NOTE_B, AbcNotationNumberedRepeat(2), NOTE_C, AbcNotationRepeat(":|")))
+
+    inside(AbcNotationConverter.convertBody(testBody)) {
+      case AbcNumberedRepeat(commonSection, numberedSectionsMap) :: Nil =>
+        commonSection match {
+          case AbcBar(AbcNote("A") :: Nil) :: Nil => ()
+        }
+        numberedSectionsMap should not contain key(0)
+        numberedSectionsMap should contain key 1
+        numberedSectionsMap should contain key 2
+        numberedSectionsMap(1) match {
+          case AbcBar(AbcNote("B") :: Nil) :: Nil => ()
+        }
+        numberedSectionsMap(2) match {
+          case AbcBar(AbcNote("C") :: Nil) :: Nil => ()
+        }
     }
   }
 

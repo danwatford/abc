@@ -8,15 +8,42 @@ class AbcTune(builder: AbcTuneBuilder) {
   val meter: Option[String] = builder.meter
   val key: String = builder.key
   val composer: Option[String] = builder.composer
-  val bodyElements: Seq[AbcStructuralElement] = builder.bodyElements.toList
+  val bodyElements: List[AbcStructuralElement] = builder.bodyElements.toList
 
   override def toString: String = String.format("AbcTune(%s, %s, %s, %s, %s, %s)", reference, titles, meter, key, composer, bodyElements)
 
+  /**
+    * Gets a list of the notes present in the tune, repeated as needed to follow the structure described by
+    * repeat sections.
+    *
+    * No conversion of notes according to the tune's key is carried out. This also means that changes of
+    * key throughout the tune will not affect the notes produced by this method.
+    *
+    * @return A list of notes.
+    */
+  def getNotes: List[AbcNote] = {
+    bodyElements.flatMap(structuralToNotesList)
+  }
+
+  private def structuralToNotesList(structural: AbcStructuralElement): List[AbcNote] = {
+    val noteElements: Seq[AbcNoteElement] = structural match {
+      case AbcBar(noteSequence) => noteSequence
+
+      case AbcRepeat(barSequence) =>  barSequence.flatMap(structuralToNotesList) ++ barSequence.flatMap(structuralToNotesList)
+
+      case AbcNumberedRepeat(commonBarSequence, numberSequencesMap) =>
+        numberSequencesMap.toSeq.sortBy(_._1).flatMap(_._2).flatMap(structuralToNotesList)
+    }
+
+    noteElements.collect{ case note: AbcNote => note }.toList
+  }
 }
 
 sealed trait AbcStructuralElement
 
 case class AbcRepeat(xs: Seq[AbcBar]) extends AbcStructuralElement
+
+case class AbcNumberedRepeat(xs: Seq[AbcBar], numberedSequences: Map[Int, Seq[AbcBar]]) extends AbcStructuralElement
 
 case class AbcBar(xs: Seq[AbcNoteElement]) extends AbcStructuralElement
 
@@ -74,7 +101,7 @@ class AbcTuneBuilder {
     this
   }
 
-  def setBodyElements(bodyElements: List[AbcStructuralElement]): AbcTuneBuilder = {
+  def setBodyElements(bodyElements: Seq[AbcStructuralElement]): AbcTuneBuilder = {
     this.bodyElements.clear()
     this.bodyElements ++= bodyElements
     this

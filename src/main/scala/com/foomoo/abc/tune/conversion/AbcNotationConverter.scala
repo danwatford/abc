@@ -49,10 +49,14 @@ object AbcNotationConverter {
 
     var inUnisonSequence = false
     var inGraceNoteSequence = false
+    var inRepeat = false
+
+    var numberedRepeatSection = 0
 
     var unisonNoteSequence: List[AbcNote] = List()
     var noteElementSequence: List[AbcNoteElement] = List()
     var barSequence: List[AbcBar] = List()
+    var numberedRepeatSequencesMap: Map[Int, List[AbcBar]] = Map()
     var bodySequence: List[AbcStructuralElement] = List()
 
     elements.foreach {
@@ -101,8 +105,10 @@ object AbcNotationConverter {
         noteElementSequence = List()
         barSequence = barSequence :+ bar
 
-      case AbcNotationRepeat(repeatMarker) => repeatMarker match {
-        case "|:" => {
+      case AbcNotationRepeat(repeatMarker) =>
+
+        def repeatStart(): Unit = {
+          inRepeat = true
           if (noteElementSequence.nonEmpty) {
             val bar = AbcBar(noteElementSequence)
             noteElementSequence = List()
@@ -113,21 +119,55 @@ object AbcNotationConverter {
           bodySequence = barSequence ++ bodySequence
           barSequence = List()
         }
-        case ":|" | ":|]" => {
+
+        def repeatEnd(): Unit = {
+          inRepeat = false
           if (noteElementSequence.nonEmpty) {
             val bar = AbcBar(noteElementSequence)
             noteElementSequence = List()
             barSequence = barSequence :+ bar
           }
 
-          // Repeat any bars in the bar sequence.
-          bodySequence = bodySequence :+ AbcRepeat(barSequence)
+          val nextStructuralElement: AbcStructuralElement = if (numberedRepeatSection > 0) {
+            numberedRepeatSequencesMap = numberedRepeatSequencesMap + ((numberedRepeatSection, barSequence))
+            numberedRepeatSection = 0
+
+            AbcNumberedRepeat(numberedRepeatSequencesMap(0), numberedRepeatSequencesMap - 0)
+          } else {
+            // Repeat any bars in the bar sequence.
+            AbcRepeat(barSequence)
+          }
+
+          bodySequence = bodySequence :+ nextStructuralElement
           barSequence = List()
         }
-      }
 
-      case AbcNotationNumberedRepeat(marker) => {
-        // TODO
+        repeatMarker match {
+          case "|:" => repeatStart()
+          case ":|" | ":|]" => repeatEnd()
+          case ":||:" =>
+            repeatEnd()
+            repeatStart()
+        }
+
+      case AbcNotationNumberedRepeat(repeatNumber) => {
+        if (noteElementSequence.nonEmpty) {
+          val bar = AbcBar(noteElementSequence)
+          noteElementSequence = List()
+          barSequence = barSequence :+ bar
+        }
+
+        if (numberedRepeatSection == 0) {
+          // We are entering the numbered repeat phase, take all read bars and notes not in a repeat block
+          // and capture into the common part (part-0) of the numbered repeat block.
+          numberedRepeatSequencesMap = Map(0 -> barSequence)
+        } else {
+          numberedRepeatSequencesMap = numberedRepeatSequencesMap + (numberedRepeatSection -> barSequence)
+        }
+        barSequence = List()
+
+        // Start capturing numbered repeat blocks.
+        numberedRepeatSection = repeatNumber
       }
 
       case AbcNotationBodyInformationField("K", keyChange) =>
@@ -148,9 +188,11 @@ object AbcNotationConverter {
       barSequence = barSequence :+ bar
     }
 
-    bodySequence = bodySequence ++ barSequence
-
-    bodySequence
+    if (inRepeat) {
+      bodySequence :+ AbcRepeat(barSequence)
+    } else {
+      bodySequence ++ barSequence
+    }
   }
 
 }
