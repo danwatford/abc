@@ -32,7 +32,9 @@ class AbcTune(builder: AbcTuneBuilder) {
       case AbcRepeat(barSequence) =>  barSequence.flatMap(structuralToNotesList) ++ barSequence.flatMap(structuralToNotesList)
 
       case AbcNumberedRepeat(commonBarSequence, numberSequencesMap) =>
-        numberSequencesMap.toSeq.sortBy(_._1).flatMap(_._2).flatMap(structuralToNotesList)
+        commonBarSequence.flatMap(structuralToNotesList) ++ numberSequencesMap.toSeq.sortBy(_._1).flatMap(_._2).flatMap(structuralToNotesList)
+
+      case AbcKeyChange(_) => List()
     }
 
     noteElements.collect{ case note: AbcNote => note }.toList

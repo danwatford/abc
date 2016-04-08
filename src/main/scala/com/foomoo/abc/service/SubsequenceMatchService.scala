@@ -1,9 +1,6 @@
 package com.foomoo.abc.service
 
-import java.util.Calendar
-
-import com.foomoo.abc.notation.processing.AbcNotationProcessor
-import com.foomoo.abc.notation.{AbcNotationNote, AbcNotationTune}
+import com.foomoo.abc.tune.{AbcNote, AbcTune}
 
 import scala.collection.mutable
 
@@ -12,7 +9,7 @@ import scala.collection.mutable
   */
 object SubsequenceMatchService {
 
-  type NoteSequence = Seq[AbcNotationNote]
+  type NoteSequence = Seq[AbcNote]
 
   /** For the given collection of tunes, find all unique note sub-sequences of the given length and then return
     * a map of those sub-sequences to the tunes they appear in.
@@ -24,31 +21,29 @@ object SubsequenceMatchService {
     * @param tunes          The collection of tunes to examine.
     * @return A map of note sub-sequences to the collection of tunes that contain them.
     */
-  def getSubsequenceTunes(sequenceLength: Int, tunes: Seq[AbcNotationTune]): Map[NoteSequence, Set[AbcNotationTune]] = {
+  def getSubsequenceTunes(sequenceLength: Int, tunes: Seq[AbcTune]): Map[NoteSequence, Set[AbcTune]] = {
 
     val configuredSequenceToSubsequences = tuneSequenceToSubsequences(sequenceLength) _
 
     // Map each tune to a sequence of its notes.
     // Limit the number of tunes to process with take() function.
-    val tuneToNoteSequenceMap: Map[AbcNotationTune, NoteSequence] = tunes.map(tune => (tune, AbcNotationProcessor.simpleNoteExtract(tune))).toMap
+    val tuneToNoteSequenceMap: Map[AbcTune, NoteSequence] = tunes.map(tune => (tune, tune.getNotes)).toMap
 
     // For each tune sequence, build a set of note sub-sequences that appear.
-    val tuneToSubsequencesMap: Map[AbcNotationTune, Set[NoteSequence]] = tuneToNoteSequenceMap.mapValues(configuredSequenceToSubsequences)
+    val tuneToSubsequencesMap: Map[AbcTune, Set[NoteSequence]] = tuneToNoteSequenceMap.mapValues(configuredSequenceToSubsequences)
 
     // Get all unique sub-sequences across all tunes
     val allSubsequences: Set[NoteSequence] = tuneToSubsequencesMap.flatMap(_._2).toSet
 
-    println(Calendar.getInstance().getTime)
     println(s"Have ${allSubsequences.size} sub-sequences")
 
     // Build a map of sub-sequences to a list of tunes that they contain.
-    val subsequenceTunesMap = new mutable.HashMap[NoteSequence, mutable.Set[AbcNotationTune]] with mutable.MultiMap[NoteSequence, AbcNotationTune]
-    tuneToSubsequencesMap.foreach { entry: (AbcNotationTune, Set[NoteSequence]) =>
+    val subsequenceTunesMap = new mutable.HashMap[NoteSequence, mutable.Set[AbcTune]] with mutable.MultiMap[NoteSequence, AbcTune]
+    tuneToSubsequencesMap.foreach { entry: (AbcTune, Set[NoteSequence]) =>
       val (tune, subsequences) = entry
       subsequences.foreach(ss => subsequenceTunesMap.addBinding(ss, tune))
     }
 
-    println(Calendar.getInstance().getTime)
     println(s"Have ${subsequenceTunesMap.size} sub-sequences in subsequencesTunesMap")
 
     // The values in the mutimap are a mutable set, convert values to immutable set then convert mutable
@@ -56,7 +51,7 @@ object SubsequenceMatchService {
     subsequenceTunesMap.mapValues(_.toSet).toMap
   }
 
-  def tuneSequenceToSubsequences(sequenceLength: Int)(tuneSequence: Seq[AbcNotationNote]): Set[Seq[AbcNotationNote]] = {
+  def tuneSequenceToSubsequences(sequenceLength: Int)(tuneSequence: NoteSequence): Set[NoteSequence] = {
     tuneSequence.sliding(sequenceLength).toSet
   }
 
