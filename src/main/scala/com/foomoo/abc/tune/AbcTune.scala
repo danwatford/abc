@@ -39,15 +39,44 @@ class AbcTune(builder: AbcTuneBuilder) {
 
     noteElements.collect{ case note: AbcNote => note }.toList
   }
+
+
+  override def hashCode(): Int = {
+    val prime = 41
+    var result = 1
+
+    result = prime * result + reference.hashCode()
+    result = prime * result + titles.hashCode()
+    result = prime * result + meter.hashCode()
+    result = prime * result + key.hashCode()
+    result = prime * result + composer.hashCode()
+    result = prime * result + bodyElements.hashCode()
+
+    result
+  }
+
+  override def equals(other: Any): Boolean = other match {
+    case that: AbcTune => (that canEqual this) &&
+      (reference == that.reference) &&
+      (titles == that.titles) &&
+      (meter == that.meter) &&
+      (key == that.key) &&
+      (composer == that.composer) &&
+      (bodyElements == that.bodyElements)
+
+    case _ => false
+  }
+
+  def canEqual(other: Any) = other.isInstanceOf[AbcTune]
 }
 
 sealed trait AbcStructuralElement
 
-case class AbcRepeat(xs: Seq[AbcBar]) extends AbcStructuralElement
+case class AbcRepeat(bars: Seq[AbcBar]) extends AbcStructuralElement
 
-case class AbcNumberedRepeat(xs: Seq[AbcBar], numberedSequences: Map[Int, Seq[AbcBar]]) extends AbcStructuralElement
+case class AbcNumberedRepeat(bars: Seq[AbcBar], numberedSequences: Map[Int, Seq[AbcBar]]) extends AbcStructuralElement
 
-case class AbcBar(xs: Seq[AbcNoteElement]) extends AbcStructuralElement
+case class AbcBar(noteElements: Seq[AbcNoteElement]) extends AbcStructuralElement
 
 case class AbcKeyChange(key: String) extends AbcStructuralElement
 

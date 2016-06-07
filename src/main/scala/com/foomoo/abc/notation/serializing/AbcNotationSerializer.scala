@@ -2,6 +2,8 @@ package com.foomoo.abc.notation.serializing
 
 import com.foomoo.abc.notation.{AbcNotationBodyElement, AbcNotationHeaderLine, AbcNotationTune}
 
+import scala.reflect.Manifest
+
 object AbcNotationSerializer {
   import org.json4s._
   import org.json4s.native.Serialization
@@ -13,6 +15,6 @@ object AbcNotationSerializer {
 
   def write(tuneNotation: AbcNotationTune): String = serializationWrite(tuneNotation)
 
-  def read(serializedTune: String): AbcNotationTune = serializationRead(serializedTune)
+  def read(serializedTune: String)(implicit mf: Manifest[AbcNotationTune]): AbcNotationTune = serializationRead(serializedTune)
 
 }

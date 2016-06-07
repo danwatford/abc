@@ -21,5 +21,32 @@ object AbcTuneTestSupport {
   val BAR_CD = AbcBar(List(NOTE_C, NOTE_D))
   val BAR_EF = AbcBar(List(NOTE_E, NOTE_F))
 
+  val REP1 = AbcRepeat(List(BAR_AB, BAR_CD))
+  val REP2 = AbcRepeat(List(BAR_EF))
+
+  val NUMBERED_REP1 = AbcNumberedRepeat(List(BAR_AB, BAR_CD), Map(1 -> Seq(BAR_EF), 2 -> Seq(BAR_A)))
+
+  def getTestTune(): AbcTune = {
+
+    val builder = new AbcTuneBuilder
+
+    builder.addTitle("Title 1")
+    builder.addTitle("Title 2")
+    builder.addTitle("Title 3")
+
+    builder.setKey("C")
+
+    builder.setMeter("4/4")
+
+    builder.setComposer("Composer 1")
+
+    builder.setReference("1")
+
+    builder.addNoteElement(BAR_AB).addNoteElement(BAR_CD)
+    builder.addNoteElement(REP1).addNoteElement(REP2)
+    builder.addNoteElement(NUMBERED_REP1)
+
+    builder.build()
+  }
 
 }
