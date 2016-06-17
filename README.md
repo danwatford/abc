@@ -1,8 +1,9 @@
-# ABC Notation Parser
+# ABC Parser, Processor and Objects
 Parser and processor for tunes written in ABC Notation. Based on information from http://abcnotation.com/learn
 
-This library contains a parser and serializer for ABC Notation. It also contains some basic processing to remove
-comments, line continuations and to extract note sequences. The original intent of the library was to provide
+This repository contains libraries for parsing, processing and serializing ABC Notation into ABC Objects.
+It also contains a processor for some basic processing to remove
+comments, line continuations and to extract note sequences. The original intent was to provide
 a way to extract notes from ABC tunes in order to find matching note sequences across tunes.
 
 An example TuneMatcher program has been provided to demonstrate finding note sequences common to tunes. This

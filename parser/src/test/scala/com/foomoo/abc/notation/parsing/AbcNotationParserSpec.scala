@@ -2,7 +2,6 @@ package com.foomoo.abc.notation.parsing
 
 import java.net.URI
 
-import com.foomoo.abc._
 import com.foomoo.abc.notation.AbcNotationTestSupport._
 import com.foomoo.abc.notation._
 
