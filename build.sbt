@@ -1,18 +1,20 @@
 import sbt.Keys._
 
+//import bintray.Keys._
+
 lazy val commonSettings = Seq(
   organization := "com.foomoo.abc",
   version := "0.1-SNAPSHOT",
   scalaVersion := "2.11.7",
-
-  licenses := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+  licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
+
 
 lazy val publishSettings = Seq(
   publishMavenStyle := true,
   pomIncludeRepository := { _ => false },
   publishArtifact in Test := false,
-  pomExtra := (
+  pomExtra :=
     <developers>
       <developer>
         <name>Daniel Watford</name>
@@ -21,11 +23,10 @@ lazy val publishSettings = Seq(
         <timezone>Europe/London</timezone>
       </developer>
     </developers>
-    )
 )
 
 lazy val dependencies = Seq(
-  "org.scala-lang.modules" % "scala-parser-combinators_2.11" % "1.0.4",
+  "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
   "org.json4s" %% "json4s-native" % "3.3.0",
   "org.scalatest" % "scalatest_2.11" % "2.2.6" % Test
 )
@@ -33,10 +34,7 @@ lazy val dependencies = Seq(
 lazy val `abc-parent` = (project in file("."))
   .aggregate(`abc-domain`, `abc-parser`, `abc-app`)
   .settings(commonSettings: _*)
-  .settings(publishSettings)
-  .settings(
-    name := "abc-parent"
-  )
+  .settings(publishArtifact := false)
 
 lazy val `abc-domain` = (project in file("domain"))
   .settings(commonSettings: _*)
