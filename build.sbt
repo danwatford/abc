@@ -1,14 +1,11 @@
 import sbt.Keys._
 
-//import bintray.Keys._
-
 lazy val commonSettings = Seq(
   organization := "com.foomoo.abc",
   version := "0.1-SNAPSHOT",
   scalaVersion := "2.11.7",
   licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
-
 
 lazy val publishSettings = Seq(
   publishMavenStyle := true,
