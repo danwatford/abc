@@ -2,7 +2,7 @@ import sbt.Keys._
 
 lazy val commonSettings = Seq(
   organization := "com.foomoo.abc",
-  version := "0.1-SNAPSHOT",
+  version := "0.1",
   scalaVersion := "2.11.7",
   licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
@@ -31,7 +31,7 @@ lazy val dependencies = Seq(
 lazy val `abc-parent` = (project in file("."))
   .aggregate(`abc-domain`, `abc-parser`, `abc-app`)
   .settings(commonSettings: _*)
-  .settings(publishArtifact := false)
+  .settings(publishSettings)
 
 lazy val `abc-domain` = (project in file("domain"))
   .settings(commonSettings: _*)
@@ -53,4 +53,8 @@ lazy val `abc-parser` = (project in file("parser"))
 lazy val `abc-app` = (project in file("app"))
   .dependsOn(`abc-parser`)
   .settings(commonSettings: _*)
+  .settings(
+    name := "abc-app",
+    libraryDependencies ++= dependencies
+  )
 
