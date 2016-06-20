@@ -5,7 +5,7 @@ import com.foomoo.abc.tune.{AbcNote, AbcTune}
 import scala.collection.mutable
 
 /**
-  * Service to find tunes containing matching subs-equences of notes.
+  * Service to find tunes containing matching subs-sequences of notes.
   */
 object SubsequenceMatchService {
 
@@ -46,7 +46,7 @@ object SubsequenceMatchService {
 
     println(s"Have ${subsequenceTunesMap.size} sub-sequences in subsequencesTunesMap")
 
-    // The values in the mutimap are a mutable set, convert values to immutable set then convert mutable
+    // The values in the multimap are a mutable set, convert values to immutable set then convert mutable
     // map to immutable map.
     subsequenceTunesMap.mapValues(_.toSet).toMap
   }

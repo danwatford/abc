@@ -85,7 +85,7 @@ sealed trait AbcNoteElement
 
 case class AbcNote(note: String) extends AbcNoteElement
 
-case class AbcBrokenRythm(note1: AbcNote, note2: AbcNote) extends AbcNoteElement
+case class AbcBrokenRhythm(note1: AbcNote, note2: AbcNote) extends AbcNoteElement
 
 case class AbcTriplet(note1: AbcNote, note2: AbcNote, note3: AbcNote) extends AbcNoteElement
 

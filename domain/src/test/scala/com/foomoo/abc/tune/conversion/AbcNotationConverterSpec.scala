@@ -125,8 +125,8 @@ class AbcNotationConverterSpec extends UnitSpec {
     }
   }
 
-  it should "ignore broken rythms but still convert the notes" in {
-    val tuneNotation: AbcNotationTune = AbcNotationTune(MINIMAL_TUNE_HEADER_NOTATION, AbcNotationBody(List(NOTE_A, AbcNotationBrokenRythm("<"), NOTE_B)))
+  it should "ignore broken rhythms but still convert the notes" in {
+    val tuneNotation: AbcNotationTune = AbcNotationTune(MINIMAL_TUNE_HEADER_NOTATION, AbcNotationBody(List(NOTE_A, AbcNotationBrokenRhythm("<"), NOTE_B)))
 
     val tune: AbcTune = AbcNotationConverter.convertTune(tuneNotation)
     inside(tune.bodyElements) {

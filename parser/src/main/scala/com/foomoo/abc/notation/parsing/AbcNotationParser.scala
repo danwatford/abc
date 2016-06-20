@@ -55,7 +55,7 @@ trait AbcNotationParser extends DebugRegexParsers {
 
   def rest: Parser[AbcNotationRest] = """[Zzx]""".r <~ noteLength ^^ { case rest => AbcNotationRest(rest) }
 
-  def brokenRythm: Parser[AbcNotationBrokenRythm] = (">" | "<") ^^ { case direction => AbcNotationBrokenRythm(direction) }
+  def brokenRythm: Parser[AbcNotationBrokenRhythm] = (">" | "<") ^^ { case direction => AbcNotationBrokenRhythm(direction) }
 
   def triplet: Parser[AbcNotationTriplet] = "(3" ^^ { case _ => AbcNotationTriplet() }
 

@@ -67,10 +67,10 @@ class AbcNotationParserSpec extends UnitSpec {
   }
 
   it should "read dotted notes" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBrokenRythm(">"), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBrokenRhythm(">"), NOTE_B))) {
       parseBody("A>B")
     }
-    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBrokenRythm("<"), NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBrokenRhythm("<"), NOTE_B))) {
       parseBody("A<B")
     }
   }

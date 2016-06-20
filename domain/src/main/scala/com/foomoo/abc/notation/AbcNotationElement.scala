@@ -27,7 +27,7 @@ case class AbcNotationBodyLineContinuation() extends AbcNotationBodyElement
 
 case class AbcNotationNote(note: String) extends AbcNotationBodyElement
 
-case class AbcNotationBrokenRythm(brokenRythmDirection: String) extends AbcNotationBodyElement
+case class AbcNotationBrokenRhythm(brokenRhythmDirection: String) extends AbcNotationBodyElement
 
 case class AbcNotationTriplet() extends AbcNotationBodyElement
 

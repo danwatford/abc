@@ -6,7 +6,7 @@ import org.json4s._
 import scala.reflect.Manifest
 
 class AbcTuneCustomSerializer extends CustomSerializer[AbcTune](format => ( {
-  case JObject(fields) => {
+  case JObject(fields) =>
     val builder = new AbcTuneBuilder()
 
     fields.foreach {
@@ -27,7 +27,6 @@ class AbcTuneCustomSerializer extends CustomSerializer[AbcTune](format => ( {
     }
 
     builder.build()
-  }
 },
   PartialFunction.empty
 ))

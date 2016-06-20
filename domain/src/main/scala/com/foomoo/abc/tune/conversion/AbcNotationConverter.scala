@@ -70,7 +70,7 @@ object AbcNotationConverter {
         }
 
       // Ignore
-      case AbcNotationBrokenRythm(_) => ()
+      case AbcNotationBrokenRhythm(_) => ()
 
       // Ignore
       case AbcNotationTriplet() => ()
@@ -150,7 +150,7 @@ object AbcNotationConverter {
             repeatStart()
         }
 
-      case AbcNotationNumberedRepeat(repeatNumber) => {
+      case AbcNotationNumberedRepeat(repeatNumber) =>
         if (noteElementSequence.nonEmpty) {
           val bar = AbcBar(noteElementSequence)
           noteElementSequence = List()
@@ -168,7 +168,6 @@ object AbcNotationConverter {
 
         // Start capturing numbered repeat blocks.
         numberedRepeatSection = repeatNumber
-      }
 
       case AbcNotationBodyInformationField("K", keyChange) =>
         bodySequence = bodySequence :+ AbcKeyChange(keyChange)
