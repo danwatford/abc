@@ -26,7 +26,7 @@ object AbcTuneTestSupport {
 
   val NUMBERED_REP1 = AbcNumberedRepeat(List(BAR_AB, BAR_CD), Map(1 -> Seq(BAR_EF), 2 -> Seq(BAR_A)))
 
-  def getTestTune(): AbcTune = {
+  def getTestTune: AbcTune = {
 
     val builder = new AbcTuneBuilder
 
