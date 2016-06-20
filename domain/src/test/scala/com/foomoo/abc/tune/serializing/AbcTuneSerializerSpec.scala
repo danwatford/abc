@@ -9,7 +9,7 @@ class AbcTuneSerializerSpec extends UnitSpec {
 
   "The AbcTuneSerializer" should "serializer and deserialize to the same object" in {
 
-    val testTune = AbcTuneTestSupport.getTestTune()
+    val testTune = AbcTuneTestSupport.getTestTune
 
     val json: String = AbcTuneSerializer.writePretty(testTune)
 
