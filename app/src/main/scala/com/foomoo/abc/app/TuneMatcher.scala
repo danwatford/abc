@@ -43,7 +43,7 @@ object TuneMatcher extends App {
 
   println(s"Read ${tunes.length} tunes")
 
-  private val subsequenceTunesMap: Map[NoteSequence, Set[AbcTune]] = SubsequenceMatchService.getSubsequenceTunes(16, tunes)
+  private val subsequenceTunesMap: Map[NoteSequence, Set[AbcTune]] = SubsequenceMatchService.getSubSequenceTunes(16, tunes)
 
   // Filter out any sequences with only one matching tune.
   private val filteredSubsequenceTunesMap: Map[NoteSequence, Set[AbcTune]] = subsequenceTunesMap.filter(_._2.size > 1)
