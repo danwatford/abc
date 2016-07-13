@@ -102,6 +102,16 @@ class AbcTuneBuilder {
   var composer: Option[String] = None
   var bodyElements = new ListBuffer[AbcStructuralElement]
 
+  def this(abcTune: AbcTune) {
+    this()
+    abcTune.reference.foreach(setReference)
+    abcTune.titles.foreach(addTitle)
+    abcTune.meter.foreach(setMeter)
+    abcTune.composer.foreach(setComposer)
+    setKey(abcTune.key)
+    setBodyElements(abcTune.bodyElements)
+  }
+
   def setReference(reference: String): AbcTuneBuilder = {
     this.reference = Some(reference)
     this
