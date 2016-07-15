@@ -37,7 +37,7 @@ trait AbcNotationParser extends DebugRegexParsers {
 
   // A note is zero or many sharp (^) or flat (_) symbols, followed by zero or one natural symbols (=),
   // followed by the note name (a-g, A-G), followed by zero or many octave modifies (',), followed by the note length.
-  def note: Parser[AbcNotationNote] = opt(noteDecoration) ~> ("""[_^]*=?[a-gA-G][',]*""".r <~ noteLength) ^^ { case noteValue => AbcNotationNote(noteValue) }
+  def note: Parser[AbcNotationNote] = opt(noteDecoration) ~> ("""[_^]*=?[a-gA-G][',]*""".r ~ noteLength) ^^ { case noteValue ~ noteLength => AbcNotationNote(noteValue, noteLength) }
 
   def tie: Parser[AbcNotationTie] = "-" ^^ { case _ => AbcNotationTie() }
 
