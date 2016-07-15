@@ -159,7 +159,7 @@ trait AbcNotationParser extends DebugRegexParsers {
   def headerLineComment: Parser[AbcNotationHeaderLineComment] = inlineComment <~ opt(linebreak) ^^ { case commentString => AbcNotationHeaderLineComment(commentString) }
 
   def tuneHeader: Parser[AbcNotationHeader] =
-    refInformationField ~ rep(informationField) ~ keyInformationField ^^ { case refField ~ fieldList ~ keyfield => AbcNotationHeader(refField :: keyfield :: fieldList) }
+    refInformationField ~ rep(informationField) ~ keyInformationField ^^ { case refField ~ fieldList ~ keyField => AbcNotationHeader(refField :: (fieldList :+ keyField)) }
 
   def tune: Parser[AbcNotationTune] = rep(emptyLine) ~> tuneHeader ~ tuneBody ^^ { case headerList ~ bodyList => AbcNotationTune(headerList, bodyList) }
 
