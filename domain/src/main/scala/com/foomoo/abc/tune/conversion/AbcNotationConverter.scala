@@ -28,6 +28,7 @@ object AbcNotationConverter {
   def convertTune(tuneNotation: AbcNotationTune, fileHeaderNotation: AbcNotationFileHeader): AbcTune = {
 
     val tuneBuilder = new AbcTuneBuilder()
+    tuneBuilder.setAbcNotation(tuneNotation)
 
     fileHeaderNotation.lines ++ tuneNotation.header.lines foreach {
       case AbcNotationHeaderInformationField("X", refString) => tuneBuilder.setReference(refString)
@@ -60,7 +61,7 @@ object AbcNotationConverter {
     var bodySequence: List[AbcStructuralElement] = List()
 
     elements.foreach {
-      case AbcNotationNote(note) =>
+      case AbcNotationNote(note, noteLength) =>
         if (inGraceNoteSequence) {
           () // Drop grace notes
         } else if (inUnisonSequence) {
