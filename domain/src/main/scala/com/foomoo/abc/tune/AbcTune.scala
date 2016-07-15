@@ -1,8 +1,11 @@
 package com.foomoo.abc.tune
 
+import com.foomoo.abc.notation.AbcNotationTune
+
 import scala.collection.mutable.ListBuffer
 
 class AbcTune(builder: AbcTuneBuilder) {
+  val abcNotation: Option[AbcNotationTune] = builder.abcNotation
   val reference: Option[String] = builder.reference
   val titles: List[String] = builder.titles
   val meter: Option[String] = builder.meter
@@ -95,6 +98,7 @@ case class AbcUnison(notes: List[AbcNote]) extends AbcNoteElement
 
 class AbcTuneBuilder {
 
+  var abcNotation: Option[AbcNotationTune] = None
   var reference: Option[String] = None
   var titles: List[String] = Nil
   var meter: Option[String] = None
@@ -104,12 +108,18 @@ class AbcTuneBuilder {
 
   def this(abcTune: AbcTune) {
     this()
+    abcTune.abcNotation.foreach(setAbcNotation)
     abcTune.reference.foreach(setReference)
     abcTune.titles.foreach(addTitle)
     abcTune.meter.foreach(setMeter)
     abcTune.composer.foreach(setComposer)
     setKey(abcTune.key)
     setBodyElements(abcTune.bodyElements)
+  }
+
+  def setAbcNotation(abcNotationTune: AbcNotationTune) = {
+    this.abcNotation = Some(abcNotationTune)
+    this
   }
 
   def setReference(reference: String): AbcTuneBuilder = {
