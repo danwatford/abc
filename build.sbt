@@ -2,7 +2,7 @@ import sbt.Keys._
 
 lazy val commonSettings = Seq(
   organization := "com.foomoo.abc",
-  version := "0.3",
+  version := "0.4-SNAPSHOT",
   scalaVersion := "2.11.7",
   licenses +=("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
