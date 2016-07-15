@@ -10,7 +10,7 @@ object AbcNotationStringBuilder {
 
   def headerToString(notationHeader: AbcNotationHeader): String = notationHeader.lines.map {
     case AbcNotationHeaderLineComment(comment) => s"% $comment"
-    case AbcNotationHeaderInformationField(key, value) => s"$key: $value"
+    case AbcNotationHeaderInformationField(key, value) => s"$key:$value"
   }.mkString("\n")
 
   def bodyToString(notationBody: AbcNotationBody): String = notationBody.elements.map {
@@ -18,7 +18,7 @@ object AbcNotationStringBuilder {
     case AbcNotationBodyNewLine() => "\n"
     case AbcNotationBodyScoreLineBreak() => "$"
     case AbcNotationBodyLineContinuation() => "\\"
-    case AbcNotationNote(note) => note
+    case AbcNotationNote(note, noteLength) => note + noteLength
     case AbcNotationBrokenRhythm(brokenRhythmDirection) => brokenRhythmDirection
     case AbcNotationTriplet() => "(3"
     case AbcNotationTie() => "-"
@@ -37,4 +37,6 @@ object AbcNotationStringBuilder {
     case AbcNotationBodyInformationField(key, value) => s"[$key: $value]"
   }.mkString
 
+  def tuneToString(notationTune: AbcNotationTune): String =
+    headerToString(notationTune.header) + "\n" + bodyToString(notationTune.body)
 }
