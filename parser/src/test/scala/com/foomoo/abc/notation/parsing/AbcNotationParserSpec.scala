@@ -19,7 +19,7 @@ class AbcNotationParserSpec extends UnitSpec {
   val rvw2Contents: String = Source.fromFile(rvw2Resource, "UTF-8").mkString
 
   "The AbcNotationParser" should "read notes" in {
-    assertResult(AbcNotationBody(List(NOTE_c, NOTE_e, NOTE_c, WHITESPACE, NOTE_C, NOTE_d, NOTE_B))) {
+    assertResult(AbcNotationBody(List(NOTE_c.withLength("2"), NOTE_e, NOTE_c, WHITESPACE, NOTE_C.withLength("2"), NOTE_d.withLength("/2"), NOTE_B.withLength("//")))) {
       parseBody("c2ec C2d/2B//")
     }
   }

@@ -25,7 +25,9 @@ case class AbcNotationBodyScoreLineBreak() extends AbcNotationBodyElement
 
 case class AbcNotationBodyLineContinuation() extends AbcNotationBodyElement
 
-case class AbcNotationNote(note: String, lengthModifier: String) extends AbcNotationBodyElement
+case class AbcNotationNote(note: String, lengthModifier: String) extends AbcNotationBodyElement {
+  def withLength(newLength: String): AbcNotationNote = new AbcNotationNote(note, newLength)
+}
 
 object AbcNotationNote {
   def apply(note: String) = new AbcNotationNote(note, "")
