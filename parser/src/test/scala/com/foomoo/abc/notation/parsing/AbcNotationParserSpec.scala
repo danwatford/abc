@@ -118,8 +118,9 @@ class AbcNotationParserSpec extends UnitSpec {
     assertResult(AbcNotationBody(List(NOTE_B, AbcNotationNumberedRepeat(1),
       WHITESPACE, NOTE_C, AbcNotationNumberedRepeat(2),
       WHITESPACE, NOTE_D, AbcNotationBar("|"), WHITESPACE,
-      AbcNotationNumberedRepeat(3), WHITESPACE, NOTE_E))) {
-      parseBody("B|1 C:|2 D| [3 E")
+      AbcNotationNumberedRepeat(3), WHITESPACE, NOTE_E,
+      AbcNotationNumberedRepeat(4), WHITESPACE, NOTE_F))) {
+      parseBody("B|1 C:|2 D| [3 E||4 F")
     }
   }
 
@@ -197,7 +198,7 @@ class AbcNotationParserSpec extends UnitSpec {
 
   it should "read Paul Hardy Tunebook" in {
     inside(parseFile(pghSessionTunebookContents)) {
-      case AbcNotationFile(_, _, tuneList) => tuneList should have size 518
+      case AbcNotationFile(_, _, tuneList) => tuneList should have size 569
     }
   }
 

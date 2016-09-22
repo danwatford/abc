@@ -65,7 +65,7 @@ trait AbcNotationParser extends DebugRegexParsers {
 
   def repeatMarker: Parser[AbcNotationRepeat] = opt(noteDecoration) ~> ("[|:" | "|:" | ":|]" | ":|" | "::") ^^ { case markerString => AbcNotationRepeat(markerString) }
 
-  def numberedRepeatMarker: Parser[AbcNotationNumberedRepeat] = (regex("""\|?\[""".r) | regex(""":?\|""".r)) ~> """\d+""".r ^^ { case numberString => AbcNotationNumberedRepeat(numberString.toInt) }
+  def numberedRepeatMarker: Parser[AbcNotationNumberedRepeat] = (regex("""\|?\[""".r) | literal("||") | regex(""":?\|""".r)) ~> """\d+""".r ^^ { case numberString => AbcNotationNumberedRepeat(numberString.toInt) }
 
   def scoreLineBreak: Parser[AbcNotationBodyScoreLineBreak] = "$" ^^ { case _ => AbcNotationBodyScoreLineBreak() }
 

@@ -10,8 +10,8 @@ object AbcNotationTestSupport {
   val NOTE_C = AbcNotationNote("C")
   val NOTE_D = AbcNotationNote("D")
   val NOTE_E = AbcNotationNote("E")
-  val NOTE_F = AbcNotationNote("E")
-  val NOTE_G = AbcNotationNote("E")
+  val NOTE_F = AbcNotationNote("F")
+  val NOTE_G = AbcNotationNote("G")
 
   val NOTE_a = AbcNotationNote("a")
   val NOTE_b = AbcNotationNote("b")
