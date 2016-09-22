@@ -13,11 +13,11 @@ trait AbcNotationParser extends DebugRegexParsers {
   def eoi =
     """\z""".r
 
-  def linebreak: Parser[Char] = (literal("\n") | literal("\r\n")) ^^ { case _ => '\n' }
+  def linebreak: Parser[Char] = (literal("\n") | literal("\r\n")) ^^ (_ => '\n')
 
   def nonEscapedCharacter[Char] = not("""\""")
 
-  def emptyLine: Parser[String] = rep1(linebreak) ^^ { case _ => "" }
+  def emptyLine: Parser[String] = rep1(linebreak) ^^ (_ => "")
 
   def nonLinebreakString: Parser[String] = """[^\r\n]*""".r
 
@@ -33,41 +33,41 @@ trait AbcNotationParser extends DebugRegexParsers {
 
   def noteDecoration: Parser[String] = noteDecorationShortCut | noteDecorationSymbol | noteDecorationSymbolDeprecated
 
-  def bodyLineContination: Parser[AbcNotationBodyLineContinuation] = """\""" ^^ { case _ => AbcNotationBodyLineContinuation() }
+  def bodyLineContination: Parser[AbcNotationBodyLineContinuation] = """\""" ^^ (_ => AbcNotationBodyLineContinuation())
 
   // A note is zero or many sharp (^) or flat (_) symbols, followed by zero or one natural symbols (=),
   // followed by the note name (a-g, A-G), followed by zero or many octave modifies (',), followed by the note length.
   def note: Parser[AbcNotationNote] = opt(noteDecoration) ~> ("""[_^]*=?[a-gA-G][',]*""".r ~ noteLength) ^^ { case noteValue ~ noteLength => AbcNotationNote(noteValue, noteLength) }
 
-  def tie: Parser[AbcNotationTie] = "-" ^^ { case _ => AbcNotationTie() }
+  def tie: Parser[AbcNotationTie] = "-" ^^ (_ => AbcNotationTie())
 
-  def slurStart: Parser[AbcNotationSlurStart] = "(" ^^ { case _ => AbcNotationSlurStart() }
+  def slurStart: Parser[AbcNotationSlurStart] = "(" ^^ (_ => AbcNotationSlurStart())
 
-  def slurEnd: Parser[AbcNotationSlurEnd] = ")" ^^ { case _ => AbcNotationSlurEnd() }
+  def slurEnd: Parser[AbcNotationSlurEnd] = ")" ^^ (_ => AbcNotationSlurEnd())
 
-  def unisonStart: Parser[AbcNotationUnisonStart] = "[" ^^ { case _ => AbcNotationUnisonStart() }
+  def unisonStart: Parser[AbcNotationUnisonStart] = "[" ^^ (_ => AbcNotationUnisonStart())
 
-  def unisonEnd: Parser[AbcNotationUnisonEnd] = "]" ^^ { case _ => AbcNotationUnisonEnd() }
+  def unisonEnd: Parser[AbcNotationUnisonEnd] = "]" ^^ (_ => AbcNotationUnisonEnd())
 
-  def graceStart: Parser[AbcNotationGraceStart] = "{" ^^ { case _ => AbcNotationGraceStart() }
+  def graceStart: Parser[AbcNotationGraceStart] = "{" ^^ (_ => AbcNotationGraceStart())
 
-  def graceEnd: Parser[AbcNotationGraceEnd] = "}" ^^ { case _ => AbcNotationGraceEnd() }
+  def graceEnd: Parser[AbcNotationGraceEnd] = "}" ^^ (_ => AbcNotationGraceEnd())
 
-  def rest: Parser[AbcNotationRest] = """[Zzx]""".r <~ noteLength ^^ { case rest => AbcNotationRest(rest) }
+  def rest: Parser[AbcNotationRest] = """[Zzx]""".r <~ noteLength ^^ (rest => AbcNotationRest(rest))
 
-  def brokenRythm: Parser[AbcNotationBrokenRhythm] = (">" | "<") ^^ { case direction => AbcNotationBrokenRhythm(direction) }
+  def brokenRythm: Parser[AbcNotationBrokenRhythm] = (">" | "<") ^^ (direction => AbcNotationBrokenRhythm(direction))
 
-  def triplet: Parser[AbcNotationTriplet] = "(3" ^^ { case _ => AbcNotationTriplet() }
+  def triplet: Parser[AbcNotationTriplet] = "(3" ^^ (_ => AbcNotationTriplet())
 
-  def chord: Parser[AbcNotationChord] = "\"" ~> ("""[^\"]*""".r <~ "\"") ^^ { case chordValue => AbcNotationChord(chordValue) }
+  def chord: Parser[AbcNotationChord] = "\"" ~> ("""[^\"]*""".r <~ "\"") ^^ (chordValue => AbcNotationChord(chordValue))
 
-  def barMarker: Parser[AbcNotationBar] = opt(noteDecoration) ~> (literal("[|") | literal("|]") | literal("||") | literal("|")) ^^ { case markerString => AbcNotationBar(markerString) }
+  def barMarker: Parser[AbcNotationBar] = opt(noteDecoration) ~> (literal("[|") | literal("|]") | literal("||") | literal("|")) ^^ (markerString => AbcNotationBar(markerString))
 
-  def repeatMarker: Parser[AbcNotationRepeat] = opt(noteDecoration) ~> ("[|:" | "|:" | ":|]" | ":|" | "::") ^^ { case markerString => AbcNotationRepeat(markerString) }
+  def repeatMarker: Parser[AbcNotationRepeat] = opt(noteDecoration) ~> ("[|:" | "|:" | ":|]" | ":|" | "::") ^^ (markerString => AbcNotationRepeat(markerString))
 
-  def numberedRepeatMarker: Parser[AbcNotationNumberedRepeat] = (regex("""\|?\[""".r) | literal("||") | regex(""":?\|""".r)) ~> """\d+""".r ^^ { case numberString => AbcNotationNumberedRepeat(numberString.toInt) }
+  def numberedRepeatMarker: Parser[AbcNotationNumberedRepeat] = (regex("""\|?\[""".r) | literal("||") | regex(""":?\|""".r)) ~> """\d+""".r ^^ (numberString => AbcNotationNumberedRepeat(numberString.toInt))
 
-  def scoreLineBreak: Parser[AbcNotationBodyScoreLineBreak] = "$" ^^ { case _ => AbcNotationBodyScoreLineBreak() }
+  def scoreLineBreak: Parser[AbcNotationBodyScoreLineBreak] = "$" ^^ (_ => AbcNotationBodyScoreLineBreak())
 
   /**
     * The inline information field consists of the open square-bracket immediately followed by an H-W, h-w or plus
@@ -98,7 +98,7 @@ trait AbcNotationParser extends DebugRegexParsers {
     *
     * @return A Parser of AbcBodyCommentNotation
     */
-  def tuneBodyInlineComment: Parser[AbcNotationBodyComment] = inlineComment ^^ { case comment => AbcNotationBodyComment(comment) }
+  def tuneBodyInlineComment: Parser[AbcNotationBodyComment] = inlineComment ^^ (comment => AbcNotationBodyComment(comment))
 
   /**
     * Parses an AbcBodyCommentNotation at the start of a line based on any whitespace, followed by the percent
@@ -115,7 +115,7 @@ trait AbcNotationParser extends DebugRegexParsers {
     */
   def tuneBodyLineComment: Parser[AbcNotationBodyComment] = opt(tuneBodyWhiteSpace) ~> tuneBodyInlineComment <~ opt(linebreak)
 
-  def tuneBodyWhiteSpace: Parser[AbcNotationBodyWhitespace] = """[ \t]+""".r ^^ { case whitespace => AbcNotationBodyWhitespace(whitespace) }
+  def tuneBodyWhiteSpace: Parser[AbcNotationBodyWhitespace] = """[ \t]+""".r ^^ (whitespace => AbcNotationBodyWhitespace(whitespace))
 
   def tuneBodyLineOfElements: Parser[List[AbcNotationBodyElement]] =
     rep1(tuneBodyInlineInformationField | tie | triplet | slurStart | slurEnd | chord | brokenRythm |
@@ -140,23 +140,23 @@ trait AbcNotationParser extends DebugRegexParsers {
       }
     }
 
-  def tuneBody: Parser[AbcNotationBody] = rep(tuneBodyLine) ^^ { case lines => AbcNotationBody(lines.flatten) }
+  def tuneBody: Parser[AbcNotationBody] = rep(tuneBodyLine) ^^ (lines => AbcNotationBody(lines.flatten))
 
   // An information field value runs to the end of the line. It may contain an inline comment which will need to be
   // stripped out in later processing.
   def informationFieldValue: Parser[String] =
     """[^\r\n]*""".r <~ linebreak
 
-  def refInformationField: Parser[AbcNotationHeaderInformationField] = "X:" ~> informationFieldValue ^^ { case value => AbcNotationHeaderInformationField("X", value) }
+  def refInformationField: Parser[AbcNotationHeaderInformationField] = "X:" ~> informationFieldValue ^^ (value => AbcNotationHeaderInformationField("X", value))
 
-  def keyInformationField: Parser[AbcNotationHeaderInformationField] = "K:" ~> informationFieldValue ^^ { case value => AbcNotationHeaderInformationField("K", value) }
+  def keyInformationField: Parser[AbcNotationHeaderInformationField] = "K:" ~> informationFieldValue ^^ (value => AbcNotationHeaderInformationField("K", value))
 
   // An information field value runs to the end of the line. It may contain an inline comment which will need to be
   // stripped out in later processing.
   def informationField: Parser[AbcNotationHeaderInformationField] =
     """^[ABCDFGHILMmNOPQRrSTUVWZ+]:""".r ~ informationFieldValue ^^ { case fieldKey ~ values => AbcNotationHeaderInformationField(fieldKey.substring(0, 1), values) }
 
-  def headerLineComment: Parser[AbcNotationHeaderLineComment] = inlineComment <~ opt(linebreak) ^^ { case commentString => AbcNotationHeaderLineComment(commentString) }
+  def headerLineComment: Parser[AbcNotationHeaderLineComment] = inlineComment <~ opt(linebreak) ^^ (commentString => AbcNotationHeaderLineComment(commentString))
 
   def tuneHeader: Parser[AbcNotationHeader] =
     refInformationField ~ rep(informationField) ~ keyInformationField ^^ { case refField ~ fieldList ~ keyField => AbcNotationHeader(refField :: (fieldList :+ keyField)) }
@@ -171,7 +171,7 @@ trait AbcNotationParser extends DebugRegexParsers {
   }
 
   def fileHeader: Parser[AbcNotationFileHeader] =
-    rep(informationField | headerLineComment) <~ opt(emptyLine) ^^ { case fieldList => AbcNotationFileHeader(fieldList) }
+    rep(informationField | headerLineComment) <~ opt(emptyLine) ^^ (fieldList => AbcNotationFileHeader(fieldList))
 
   def file: Parser[AbcNotationFile] = abcIdentifier ~ fileHeader ~ tunes <~ eoi ^^ {
     case versionString ~ fileHeader ~ tuneList => AbcNotationFile(versionString, fileHeader, tuneList)
