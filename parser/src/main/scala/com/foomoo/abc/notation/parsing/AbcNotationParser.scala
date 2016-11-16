@@ -75,7 +75,7 @@ trait AbcNotationParser extends DebugRegexParsers {
     *
     * @return A Parser of AbcBodyInformationFieldNotation
     */
-  def tuneBodyInlineInformationField: Parser[AbcNotationBodyInformationField] = "[" ~> """[H-Wh-w+]:""".r ~ """[^\]]*""".r <~ "]" ^^ { case fieldKey ~ value => AbcNotationBodyInformationField(fieldKey.substring(0, 1), value) }
+  def tuneBodyInlineInformationField: Parser[AbcNotationBodyInlineInformationField] = "[" ~> """[H-Wh-w+]:""".r ~ """[^\]]*""".r <~ "]" ^^ { case fieldKey ~ value => AbcNotationBodyInlineInformationField(fieldKey.substring(0, 1), value) }
 
   /**
     * Parses an AbcBodyInformationFieldNotation at the start of a line based on an H-W, h-w or plus symbol (+)
@@ -89,7 +89,7 @@ trait AbcNotationParser extends DebugRegexParsers {
     * @return A Parser of AbcBodyInformationFieldNotation.
     */
   def tuneBodyInformationFieldLine: Parser[AbcNotationBodyInformationField] =
-    """[H-Wh-w+]:""".r ~ nonLinebreakString <~ linebreak ^^ { case fieldKey ~ value => AbcNotationBodyInformationField(fieldKey.substring(0, 1), value) }
+    """[H-Wh-w+]:""".r ~ nonLinebreakString <~ opt(linebreak) ^^ { case fieldKey ~ value => AbcNotationBodyInformationField(fieldKey.substring(0, 1), value) }
 
   /**
     * Parses AbcBodyCommentNotation based on the percent symbol and all following characters up to but not including any line break.

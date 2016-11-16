@@ -141,14 +141,26 @@ class AbcNotationParserSpec extends UnitSpec {
     }
   }
 
-  it should "read inline information fields" in {
-    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBodyInformationField("M", "6/4"), NOTE_B))) {
+  it should "read body information fields" in {
+    assertResult(AbcNotationBody(List(NOTE_A, BODY_NEWLINE,
+      AbcNotationBodyInformationField("W", "words1"),
+      AbcNotationBodyInformationField("W", "words2")))) {
+      parseBody(
+        """A
+          |W:words1
+          |W:words2""".stripMargin
+      )
+    }
+  }
+
+  it should "read body inline information fields" in {
+    assertResult(AbcNotationBody(List(NOTE_A, AbcNotationBodyInlineInformationField("M", "6/4"), NOTE_B))) {
       parseBody("A[M:6/4]B")
     }
   }
 
-  it should "read inline information fields following bars" in {
-    assertResult(AbcNotationBody(List(AbcNotationBar("|"), AbcNotationBodyInformationField("M", "6/4")))) {
+  it should "read body inline information fields following bars" in {
+    assertResult(AbcNotationBody(List(AbcNotationBar("|"), AbcNotationBodyInlineInformationField("M", "6/4")))) {
       parseBody("|[M:6/4]")
     }
   }

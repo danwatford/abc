@@ -27,12 +27,14 @@ class AbcNotationStringBuilderSpec extends UnitSpec {
 
   val TEST_BODY_STRING =
     """AB% Inline comment 1
-      |[K: D]% Inline comment 2
+      |[K:D]% Inline comment 2
       ||
-      |[M: 1]% Line comment 1
+      |[M:1]% Line comment 1
       |C\
       |% Line comment 2
       |D
+      |W:words1
+      |W:words2
       |""".stripMargin.filterNot(_ == '\r')
 
   val TEST_TUNE = AbcNotationTune(TEST_HEADER, AbcNotationTestSupport.TEST_BODY)

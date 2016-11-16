@@ -34,7 +34,8 @@ object AbcNotationStringBuilder {
     case AbcNotationRepeat(repeatMarker) => repeatMarker
     case AbcNotationNumberedRepeat(number) => s"|[$number"
     case AbcNotationBodyComment(comment) => s"% $comment\n"
-    case AbcNotationBodyInformationField(key, value) => s"[$key: $value]"
+    case AbcNotationBodyInformationField(key, value) => s"$key:$value\n"
+    case AbcNotationBodyInlineInformationField(key, value) => s"[${key}:${value}]"
   }.mkString
 
   def tuneToString(notationTune: AbcNotationTune): String =

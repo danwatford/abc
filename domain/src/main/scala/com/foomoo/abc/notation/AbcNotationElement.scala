@@ -65,6 +65,8 @@ case class AbcNotationBodyComment(comment: String) extends AbcNotationBodyElemen
 
 case class AbcNotationBodyInformationField(key: String, value: String) extends AbcNotationBodyElement
 
+case class AbcNotationBodyInlineInformationField(key: String, value: String) extends AbcNotationBodyElement
+
 /**
   * Represents the body of an ABC notation tune.
   *

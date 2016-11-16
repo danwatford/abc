@@ -47,12 +47,12 @@ object AbcNotationTestSupport {
     NOTE_A,
     NOTE_B,
     AbcNotationBodyComment("Inline comment 1"),
-    AbcNotationBodyInformationField("K", "D"),
+    AbcNotationBodyInlineInformationField("K", "D"),
     AbcNotationBodyComment("Inline comment 2"),
     AbcNotationBar("|"),
     BODY_NEWLINE
   )
-  val TEST_BODY_LINE_2 = List(AbcNotationBodyInformationField("M", "1"))
+  val TEST_BODY_LINE_2 = List(AbcNotationBodyInlineInformationField("M", "1"))
   val TEST_BODY_LINE_3 = List(AbcNotationBodyComment("Line comment 1"))
   val TEST_BODY_LINE_4 = List(
     NOTE_C,
@@ -64,8 +64,11 @@ object AbcNotationTestSupport {
     NOTE_D,
     BODY_NEWLINE
   )
+  val TEST_BODY_LINE_7 = List(AbcNotationBodyInformationField("W", "words1"))
+  val TEST_BODY_LINE_8 = List(AbcNotationBodyInformationField("W", "words2"))
 
-  val TEST_BODY = AbcNotationBody(List(TEST_BODY_LINE_1, TEST_BODY_LINE_2, TEST_BODY_LINE_3, TEST_BODY_LINE_4, TEST_BODY_LINE_5, TEST_BODY_LINE_6).flatten)
+  val TEST_BODY = AbcNotationBody(List(TEST_BODY_LINE_1, TEST_BODY_LINE_2, TEST_BODY_LINE_3, TEST_BODY_LINE_4,
+    TEST_BODY_LINE_5, TEST_BODY_LINE_6, TEST_BODY_LINE_7, TEST_BODY_LINE_8).flatten)
 
   val TEST_TUNE = AbcNotationTune(TEST_HEADER, TEST_BODY)
 
