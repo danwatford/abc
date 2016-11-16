@@ -174,6 +174,7 @@ object AbcNotationConverter {
         bodySequence = bodySequence :+ AbcKeyChange(keyChange)
 
       case AbcNotationBodyInformationField(_, _) => ()
+      case AbcNotationBodyInlineInformationField(_, _) => ()
       case AbcNotationBodyWhitespace(_) => ()
       case AbcNotationBodyNewLine() => ()
       case AbcNotationBodyLineContinuation() => ()
