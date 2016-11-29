@@ -1,4 +1,5 @@
 # ABC Parser, Processor and Objects
+[![Build Status](https://travis-ci.org/danwatford/abc.svg?branch=master)](https://travis-ci.org/danwatford/abc)
 Parser and processor for tunes written in ABC Notation. Based on information from http://abcnotation.com/learn
 
 This repository contains libraries for parsing, processing and serializing ABC Notation into ABC Objects.
